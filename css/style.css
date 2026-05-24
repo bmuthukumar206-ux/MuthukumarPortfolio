@@ -304,24 +304,27 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   to   { transform: translate(20px, -10px); }
 }
 
-/* Top-left availability indicator */
+/* Top-left availability + role label */
 .hero__label {
   position: absolute;
   top: 7.5rem;
   left: var(--pad-x);
   z-index: 5;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: baseline;
-  gap: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
   font-family: var(--display);
+}
+.hero__label-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 .hero__label-dot {
   width: 8px; height: 8px;
   background: #2ecc71;
   border-radius: 50%;
   position: relative;
-  align-self: center;
 }
 .hero__label-dot::after {
   content: "";
@@ -341,43 +344,41 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   letter-spacing: -0.01em;
   line-height: 1.25;
 }
+.hero__label-role {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.15rem;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+  padding-left: 1.25rem;
+}
 
-/* Name (left) + Role (right) sitting BEHIND the photo */
-.hero__split {
+/* Giant horizontal name — extends past viewport edges so it shows on both sides of the photo */
+.hero__name {
   position: absolute;
   inset: 0;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  padding: 0 var(--pad-x);
   z-index: 1;
   pointer-events: none;
-  gap: 0;
-}
-.hero__name-part {
   font-family: var(--display);
   font-weight: 700;
-  font-size: clamp(3rem, 13vw, 13rem);
-  line-height: 0.85;
-  letter-spacing: -0.07em;
-  color: var(--ink);
-  display: flex;
-  flex-direction: column;
-  z-index: 1;
-}
-.hero__name-part span { display: block; }
-.hero__name-part--left { text-align: left; }
-.hero__name-part--right {
-  text-align: right;
-  color: var(--ink);
-  font-style: normal;
-  font-weight: 700;
+  font-size: clamp(5rem, 22vw, 22rem);
+  line-height: 0.9;
   letter-spacing: -0.06em;
-  font-size: clamp(2rem, 8vw, 8rem);
+  color: var(--ink);
+  white-space: nowrap;
+  text-transform: uppercase;
+  animation: nameBreathe 9s ease-in-out infinite alternate;
 }
-.hero__name-part--right span:first-child { color: var(--accent); }
+@keyframes nameBreathe {
+  from { letter-spacing: -0.06em; }
+  to   { letter-spacing: -0.055em; }
+}
 
 /* Centerpiece portrait */
 .hero__portrait {
@@ -949,7 +950,7 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   .projects { grid-template-columns: 1fr; }
   .contact__grid { grid-template-columns: 1fr; gap: 2.5rem; }
   .about__stats { grid-template-columns: 1fr 1fr; }
-  .hero__name-part { font-size: clamp(2rem, 7vw, 6rem); }
+  .hero__name { font-size: clamp(4rem, 20vw, 14rem); }
   .hero__portrait { width: clamp(240px, 42vw, 400px); }
   .hero__ticker { width: 55%; }
 }
@@ -964,18 +965,11 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   .form__row { grid-template-columns: 1fr; }
   .footer__big { font-size: clamp(3rem, 18vw, 8rem); }
   .freelance__head { flex-direction: column; align-items: flex-start; }
-  .hero__name-part { font-size: clamp(1.6rem, 6vw, 3.5rem); }
-  .hero__split {
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.5rem;
-    text-align: center;
-  }
-  .hero__name-part--left,
-  .hero__name-part--right { width: 100%; text-align: center; }
+  .hero__name { font-size: clamp(3rem, 18vw, 8rem); }
   .hero__portrait { width: clamp(200px, 55vw, 320px); }
   .hero__label { top: 5.5rem; font-size: 0.85rem; }
   .hero__label-line { font-size: 0.9rem; }
+  .hero__label-role { font-size: 1rem; padding-left: 0; }
   .hero__ticker { display: none; }
   .hero__scroll { bottom: 1.5rem; font-size: 0.7rem; }
   .hero__scroll svg { width: 18px; height: 30px; }
@@ -984,7 +978,7 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   .about__stats { grid-template-columns: 1fr 1fr; gap: 1rem; }
   .stat__num { font-size: 2rem; }
   .hero__portrait { width: clamp(180px, 60vw, 260px); }
-  .hero__name-part { font-size: clamp(1.4rem, 8vw, 2.5rem); }
+  .hero__name { font-size: clamp(2.5rem, 22vw, 6rem); }
   .hero__scroll span { display: none; }
 }
 
