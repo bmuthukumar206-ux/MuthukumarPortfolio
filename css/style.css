@@ -354,48 +354,40 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   padding-left: 1.25rem;
 }
 
-/* Giant horizontal name — extends past viewport edges so it shows on both sides of the photo */
-.hero__name {
-  position: absolute;
-  inset: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  justify-content: center;
-  align-items: Left;
-  z-index: 1;
-  pointer-events: none;
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: clamp(5rem, 22vw, 12rem);
-  line-height: 0.9;
-  letter-spacing: -0.06em;
-  color: var(--ink);
-  white-space: nowrap;
-  text-transform: uppercase;
-  animation: nameBreathe 9s ease-in-out infinite alternate;
-}
+/* MUTHU on the LEFT of the photo, KUMAR on the RIGHT */
+.hero__name,
 .hero__namek {
   position: absolute;
   inset: 0;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
-  justify-content: center;
-  align-items: Right;
+  align-items: center;
+  padding: 0 var(--pad-x);
   z-index: 1;
   pointer-events: none;
   font-family: var(--display);
   font-weight: 700;
-  font-size: clamp(5rem, 22vw, 12rem);
+  font-size: clamp(4rem, 17vw, 14rem);
   line-height: 0.9;
   letter-spacing: -0.06em;
   color: var(--ink);
   white-space: nowrap;
   text-transform: uppercase;
-  animation: nameBreathe 9s ease-in-out infinite alternate;
 }
-@keyframes nameBreathe {
+.hero__name {
+  justify-content: flex-start;
+  animation: nameBreatheLeft 9s ease-in-out infinite alternate;
+}
+.hero__namek {
+  justify-content: flex-end;
+  animation: nameBreatheRight 9s ease-in-out infinite alternate;
+}
+@keyframes nameBreatheLeft {
+  from { letter-spacing: -0.06em; }
+  to   { letter-spacing: -0.055em; }
+}
+@keyframes nameBreatheRight {
   from { letter-spacing: -0.06em; }
   to   { letter-spacing: -0.055em; }
 }
@@ -970,7 +962,8 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   .projects { grid-template-columns: 1fr; }
   .contact__grid { grid-template-columns: 1fr; gap: 2.5rem; }
   .about__stats { grid-template-columns: 1fr 1fr; }
-  .hero__name { font-size: clamp(4rem, 20vw, 14rem); }
+  .hero__name,
+  .hero__namek { font-size: clamp(3rem, 14vw, 10rem); }
   .hero__portrait { width: clamp(240px, 42vw, 400px); }
   .hero__ticker { width: 55%; }
 }
@@ -985,7 +978,8 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   .form__row { grid-template-columns: 1fr; }
   .footer__big { font-size: clamp(3rem, 18vw, 8rem); }
   .freelance__head { flex-direction: column; align-items: flex-start; }
-  .hero__name { font-size: clamp(3rem, 18vw, 8rem); }
+  .hero__name,
+  .hero__namek { font-size: clamp(2.5rem, 12vw, 6rem); }
   .hero__portrait { width: clamp(200px, 55vw, 320px); }
   .hero__label { top: 5.5rem; font-size: 0.85rem; }
   .hero__label-line { font-size: 0.9rem; }
@@ -998,7 +992,8 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   .about__stats { grid-template-columns: 1fr 1fr; gap: 1rem; }
   .stat__num { font-size: 2rem; }
   .hero__portrait { width: clamp(180px, 60vw, 260px); }
-  .hero__name { font-size: clamp(2.5rem, 22vw, 6rem); }
+  .hero__name,
+  .hero__namek { font-size: clamp(2rem, 14vw, 4.5rem); }
   .hero__scroll span { display: none; }
 }
 
