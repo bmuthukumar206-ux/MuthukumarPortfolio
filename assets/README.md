@@ -1,18 +1,30 @@
 # Assets
 
-Save these two files in this folder for the site to display fully:
+Save these files in this folder for the site to display fully:
 
 | Filename | What it is |
 | --- | --- |
-| `media.jpg` | Your portrait — appears as the centerpiece of the hero. JPG, PNG or JFIF all work; if your file is `.jfif` (Windows default for some JPEGs) just rename the extension to `.jpg`. |
+| **`media.jpg`** | Your portrait — appears as the centerpiece of the hero between MUTHU / KUMAR. **Required.** |
 | `Muthukumar-B-Resume.pdf` | Your résumé — wired to the **Resume** button in the header & mobile menu. |
 
-## Photo tips
+## Saving your photo
 
-The CSS already applies professional treatment automatically — contrast lift (×1.12), slight brightness, gentle saturation pull, soft top vignette, drop shadow and a subtle floating animation. **Your face is not modified.** Just save the photo as `media.jpg`.
+1. Right-click the polished portrait you sent in chat → **Save image as…**
+2. In the save dialog, name it exactly: `media.jpg`
+3. Save it into this folder: `d:\MuthukumarPortfolio\MuthukumarPortfolio\assets\`
+4. If Windows saves it as `media.jfif`, just rename the extension to `.jpg` (View → File name extensions in Explorer if you can't see it).
+5. Refresh the browser — the hero will pick it up immediately.
 
-For the cleanest "cut-through-the-text" look (where the giant MUTHU / KUMAR letters appear to wrap around you), a **background-removed PNG** works best — use [remove.bg](https://www.remove.bg/) for free, save as `media.png`, then update the `src="assets/media.jpg"` reference in [index.html](../index.html) to `media.png`. The photo as-is will still look great in its frame — this is only for the most editorial finish.
+While `media.jpg` is missing, the hero gracefully shows an **M·B** monogram on a deep gradient in its place.
 
-If the photo looks too dark or warm after the CSS treatment, tweak the filter values in [css/style.css](../css/style.css) — search for `.hero__portrait img` and adjust the `filter:` line.
+## How the photo is treated
 
-While `media.jpg` is missing, the site gracefully shows an **M·B** monogram in its place.
+The hero portrait frame is tuned for a **pre-edited dark-background portrait** like the one you sent:
+
+- Frame background is a deep radial gradient — visually continues the photo's own dark backdrop, so the edges feel seamless instead of "cut out."
+- CSS filter is intentionally **gentle** (`contrast 1.03 · brightness 1.02 · saturate 1.02`) — the photo is already polished; we don't want to over-process it.
+- Slow vertical float animation (~6s), tiny scale + filter boost on hover.
+- Soft fade at the bottom edge blends into the page.
+- **No face modification** — only frame, filter, shadow and animation in pure CSS.
+
+If you swap in a different photo later (e.g. lighter background, candid), bump the filter values up in [css/style.css](../css/style.css) — search for `.hero__portrait img`.
