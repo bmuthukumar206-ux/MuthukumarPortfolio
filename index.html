@@ -33,21 +33,20 @@
 
   <!-- Navigation -->
   <header class="nav" data-nav>
-    <a href="#home" class="nav__logo" data-magnetic>
-      <span class="nav__logo-mark">M</span>
-      <span class="nav__logo-text">muthukumar.b</span>
-    </a>
+    <div class="nav__pill" data-magnetic>
+      <span class="nav__pill-dot"></span>
+      <span>Available for New Projects</span>
+    </div>
     <nav class="nav__links">
-      <a href="#about" data-link>About</a>
-      <a href="#expertise" data-link>Expertise</a>
-      <a href="#work" data-link>Journey</a>
-      <a href="#freelance" data-link>Work</a>
+      <a href="#freelance" data-link>Work <span class="nav__count">[2]</span></a>
+      <a href="#expertise" data-link>Service <span class="nav__count">[3]</span></a>
+      <a href="#work" data-link>Experience <span class="nav__count">[6mo]</span></a>
       <a href="#contact" data-link>Contact</a>
     </nav>
     <div class="nav__cta">
-      <a href="assets/Muthukumar-B-Resume.pdf" download class="btn btn--ghost" data-magnetic>
-        <span>Resume</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v14m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
+      <a href="#contact" class="btn btn--talk" data-magnetic>
+        <span>Let's Talk</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg>
       </a>
       <button class="nav__toggle" data-nav-toggle aria-label="Toggle menu">
         <span></span><span></span>
@@ -68,31 +67,13 @@
   <main>
     <!-- HERO -->
     <section id="home" class="hero">
-      <!-- soft decorative arc -->
-      <svg class="hero__decor" viewBox="0 0 1400 800" aria-hidden="true" preserveAspectRatio="none">
-        <path d="M -50,600 Q 350,200 700,400 T 1450,250" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 6" />
-        <circle cx="350" cy="280" r="280" fill="none" stroke="currentColor" stroke-width="1" opacity="0.4" />
-      </svg>
+      <!-- Big two-word name across the top -->
+      <h1 class="hero__title" data-reveal>
+        <span class="hero__title-outline">MUTHU</span>
+        <span class="hero__title-solid">KUMAR</span>
+      </h1>
 
-      <!-- top-left availability indicator -->
-      <div class="hero__label" data-reveal>
-        <span class="hero__label-dot"></span>
-        <span class="hero__label-line">Available · 2026</span>
-      </div>
-
-      <!-- giant name (left) and role (right) bracketing the photo -->
-      <div class="hero__split" aria-hidden="true">
-        <div class="hero__name-part hero__name-part--left" data-reveal>
-          <span>MUTHU</span>
-          <span>KUMAR</span>
-        </div>
-        <div class="hero__name-part hero__name-part--right" data-reveal>
-          <span>Salesforce</span>
-          <span>Developer</span>
-        </div>
-      </div>
-
-      <!-- centerpiece portrait -->
+      <!-- Centerpiece portrait, bottom-anchored -->
       <figure class="hero__portrait" data-reveal>
         <img src="assets/media.png"
              alt="Portrait of Muthukumar B, Salesforce Developer"
@@ -101,33 +82,45 @@
         <div class="hero__portrait-fallback" aria-hidden="true"><span>M·B</span></div>
       </figure>
 
-      <!-- bottom-right scroll cue -->
-      <a href="#about" class="hero__scroll" data-magnetic>
-        <span>Scroll down</span>
-        <svg width="24" height="40" viewBox="0 0 24 40" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M12 4 V34 M5 27 L12 34 L19 27" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </a>
-
-      <!-- bottom-left tagline / endless ticker -->
-      <div class="hero__ticker" aria-hidden="true">
-        <div class="hero__ticker-track">
-          <span>Apex</span><span>·</span>
-          <span>LWC</span><span>·</span>
-          <span>Flow Builder</span><span>·</span>
-          <span>Triggers</span><span>·</span>
-          <span>Visualforce</span><span>·</span>
-          <span>SOQL</span><span>·</span>
-          <span>Configuration</span><span>·</span>
-          <span>Apex</span><span>·</span>
-          <span>LWC</span><span>·</span>
-          <span>Flow Builder</span><span>·</span>
-          <span>Triggers</span><span>·</span>
-          <span>Visualforce</span><span>·</span>
-          <span>SOQL</span><span>·</span>
-          <span>Configuration</span><span>·</span>
-        </div>
+      <!-- Bottom-left intro block -->
+      <div class="hero__intro" data-reveal>
+        <h2 class="hero__intro-title">Salesforce Developer</h2>
+        <p class="hero__intro-desc">
+          Building clean, scalable cloud solutions on Salesforce — Apex, LWC, Flow and Visualforce.
+        </p>
+        <a href="#contact" class="btn btn--solid btn--pill" data-magnetic>
+          <span>Let's collaborate</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg>
+        </a>
       </div>
+
+      <!-- Bottom-right social stack -->
+      <ul class="hero__socials" data-reveal>
+        <li>
+          <a href="https://www.linkedin.com/in/bmuthukumar206" target="_blank" rel="noopener" data-magnetic>
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8h4.56v14H.22V8zm7.45 0h4.37v1.92h.06c.61-1.15 2.1-2.36 4.32-2.36 4.62 0 5.48 3.04 5.48 6.99V22h-4.56v-6.21c0-1.48-.03-3.39-2.07-3.39-2.07 0-2.39 1.62-2.39 3.29V22H7.67V8z"/></svg>
+            <span>LinkedIn</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://wa.me/919500548897" target="_blank" rel="noopener" data-magnetic>
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.7-1-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1.1 1.1-1.1 2.6 0 1.5 1.1 3 1.2 3.2.1.2 2.2 3.3 5.3 4.7.7.3 1.3.5 1.8.6.7.2 1.4.2 2 .1.6-.1 1.8-.7 2.1-1.5.3-.7.3-1.4.2-1.5-.1-.1-.3-.2-.6-.3zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.8 3 1.2 4.8 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+            <span>WhatsApp</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://instagram.com/" target="_blank" rel="noopener" data-magnetic>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+            <span>Instagram</span>
+          </a>
+        </li>
+        <li>
+          <a href="mailto:bmuthukumar206@gmail.com" data-magnetic>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 7 9-7"/></svg>
+            <span>Mail</span>
+          </a>
+        </li>
+      </ul>
     </section>
 
     <!-- ABOUT -->
