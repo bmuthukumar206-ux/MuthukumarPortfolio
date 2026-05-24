@@ -350,8 +350,8 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   color: var(--accent);
 }
 
-/* Giant background name */
-.hero__name {
+/* Name (left) + Role (right) bracketing the photo */
+.hero__split {
   position: absolute;
   inset: 0;
   top: 50%;
@@ -362,21 +362,40 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   padding: 0 var(--pad-x);
   z-index: 1;
   pointer-events: none;
+  gap: 1rem;
 }
 .hero__name-part {
   font-family: var(--display);
   font-weight: 700;
-  font-size: clamp(4rem, 17vw, 17rem);
-  line-height: 0.82;
-  letter-spacing: -0.07em;
+  font-size: clamp(2.5rem, 9vw, 9rem);
+  line-height: 0.85;
+  letter-spacing: -0.06em;
   color: var(--ink);
-  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
   animation: nameBreathe 9s ease-in-out infinite alternate;
 }
-.hero__name-part--right { animation-delay: -4.5s; }
+.hero__name-part span { display: block; }
+.hero__name-part--left { text-align: left; }
+.hero__name-part--right {
+  text-align: right;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  color: var(--accent);
+  animation-delay: -4.5s;
+}
 @keyframes nameBreathe {
-  from { letter-spacing: -0.07em; transform: translateX(0); }
-  to   { letter-spacing: -0.06em; transform: translateX(-4px); }
+  from { letter-spacing: -0.06em; transform: translateY(0); }
+  to   { letter-spacing: -0.055em; transform: translateY(-3px); }
+}
+.hero__name-part--right {
+  animation-name: roleBreathe;
+}
+@keyframes roleBreathe {
+  from { letter-spacing: -0.04em; transform: translateY(0); }
+  to   { letter-spacing: -0.035em; transform: translateY(3px); }
 }
 
 /* Centerpiece portrait — tuned for a TRANSPARENT-BACKGROUND PNG cutout */
@@ -399,24 +418,21 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
 }
 .hero__portrait img {
   width: 100%; height: 100%;
-  object-fit: contain;
-  object-position: center bottom;
+  object-fit: cover;
+  object-position: center 30%;
   display: block;
-  /* Drop-shadows hug the actual silhouette of a transparent PNG */
-  filter:
-    contrast(1.03) brightness(1.02) saturate(1.02)
-    drop-shadow(0 24px 40px rgba(0, 0, 0, 0.28))
-    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+  /* Radial mask: fades the dark corners of the photo into the page,
+     simulating a soft cutout without needing actual transparency */
+  -webkit-mask-image: radial-gradient(ellipse 75% 92% at center 48%, #000 45%, transparent 88%);
+          mask-image: radial-gradient(ellipse 75% 92% at center 48%, #000 45%, transparent 88%);
+  filter: contrast(1.04) brightness(1.03) saturate(1.03);
   transition: transform 1.2s var(--ease), filter 0.5s;
   position: relative;
   z-index: 2;
 }
 .hero__portrait:hover img {
   transform: scale(1.03);
-  filter:
-    contrast(1.05) brightness(1.04) saturate(1.05)
-    drop-shadow(0 28px 48px rgba(0, 0, 0, 0.32))
-    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.18));
+  filter: contrast(1.06) brightness(1.05) saturate(1.06);
 }
 .hero__portrait-fallback {
   position: absolute; inset: 0;
@@ -956,8 +972,8 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   .projects { grid-template-columns: 1fr; }
   .contact__grid { grid-template-columns: 1fr; gap: 2.5rem; }
   .about__stats { grid-template-columns: 1fr 1fr; }
-  .hero__name-part { font-size: clamp(3rem, 15vw, 11rem); }
-  .hero__portrait { width: clamp(220px, 38vw, 360px); }
+  .hero__name-part { font-size: clamp(2rem, 7vw, 6rem); }
+  .hero__portrait { width: clamp(240px, 42vw, 400px); }
   .hero__ticker { width: 55%; }
 }
 @media (max-width: 768px) {
@@ -971,12 +987,11 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   .form__row { grid-template-columns: 1fr; }
   .footer__big { font-size: clamp(3rem, 18vw, 8rem); }
   .freelance__head { flex-direction: column; align-items: flex-start; }
-  .hero__name-part { font-size: clamp(3rem, 13vw, 7rem); }
-  .hero__name {
+  .hero__name-part { font-size: clamp(1.6rem, 6vw, 3.5rem); }
+  .hero__split {
     flex-direction: column;
     justify-content: center;
-    gap: 0;
-    top: 50%;
+    gap: 0.5rem;
     text-align: center;
   }
   .hero__name-part--left,
@@ -993,7 +1008,7 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   .about__stats { grid-template-columns: 1fr 1fr; gap: 1rem; }
   .stat__num { font-size: 2rem; }
   .hero__portrait { width: clamp(180px, 60vw, 260px); }
-  .hero__name-part { font-size: clamp(2.5rem, 16vw, 5rem); }
+  .hero__name-part { font-size: clamp(1.4rem, 8vw, 2.5rem); }
   .hero__scroll span { display: none; }
 }
 
