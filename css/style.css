@@ -362,12 +362,32 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   transform: translateY(-50%);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: Left;
   z-index: 1;
   pointer-events: none;
   font-family: var(--display);
   font-weight: 700;
-  font-size: clamp(5rem, 22vw, 22rem);
+  font-size: clamp(5rem, 22vw, 12rem);
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  color: var(--ink);
+  white-space: nowrap;
+  text-transform: uppercase;
+  animation: nameBreathe 9s ease-in-out infinite alternate;
+}
+.hero__namek {
+  position: absolute;
+  inset: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: Right;
+  z-index: 1;
+  pointer-events: none;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(5rem, 22vw, 12rem);
   line-height: 0.9;
   letter-spacing: -0.06em;
   color: var(--ink);
