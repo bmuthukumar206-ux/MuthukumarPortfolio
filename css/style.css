@@ -314,6 +314,20 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   position: relative;
   overflow: hidden;
 }
+.hero__inner {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  flex: 1;
+}
+.hero__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 .hero__blob {
   position: absolute;
   width: 620px; height: 620px;
@@ -370,11 +384,11 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
 .hero__title {
   position: relative; z-index: 2;
   font-family: var(--display);
-  font-size: clamp(3rem, 11vw, 10rem);
+  font-size: clamp(2.8rem, 8.5vw, 7.5rem);
   line-height: 0.92;
   letter-spacing: -0.05em;
   font-weight: 500;
-  margin: 2rem 0;
+  margin: 0.5rem 0;
 }
 .hero__line {
   display: block;
@@ -391,34 +405,160 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
 .hero__line em { font-size: 1em; opacity: 0.9; }
 .hero__dot { color: var(--ink); }
 
-.hero__bottom {
-  position: relative; z-index: 2;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
 .hero__intro {
-  max-width: 520px;
+  max-width: 480px;
   font-size: 1rem;
   color: var(--ink-2);
+  margin-top: 0.5rem;
 }
+.hero__intro p { margin: 0; }
 .hero__intro .num {
   font-family: var(--display);
   font-weight: 600;
   color: var(--accent);
 }
 .hero__intro strong { font-weight: 600; }
+
 .hero__scroll {
+  align-self: center;
   display: inline-flex; flex-direction: column; align-items: center; gap: 0.6rem;
   font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
   color: var(--muted);
+  margin-top: 2rem;
+  position: relative; z-index: 2;
 }
 .hero__scroll svg { animation: bob 2s ease-in-out infinite; }
 @keyframes bob {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(6px); }
+}
+
+/* ---------- Hero portrait ---------- */
+.hero__portrait {
+  position: relative;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-self: end;
+  width: 100%;
+  max-width: 460px;
+}
+.hero__portrait-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: 32px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f0ede6, #e6e2da);
+  box-shadow:
+    0 40px 80px -30px rgba(0, 0, 0, 0.35),
+    0 0 0 1px var(--line);
+  transform: rotate(-2deg);
+  transition: transform 0.7s var(--ease);
+  z-index: 2;
+}
+.hero__portrait:hover .hero__portrait-frame {
+  transform: rotate(0deg) scale(1.015);
+}
+.hero__portrait-frame img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: contrast(1.08) brightness(1.05) saturate(0.92);
+  transition: transform 1.2s var(--ease), filter 0.5s;
+  position: relative;
+  z-index: 2;
+}
+.hero__portrait:hover .hero__portrait-frame img {
+  transform: scale(1.04);
+  filter: contrast(1.10) brightness(1.06) saturate(0.95);
+}
+.hero__portrait-frame::after {
+  content: "";
+  position: absolute; inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 30%, transparent 55%, rgba(0,0,0,0.20) 100%),
+    linear-gradient(180deg, rgba(255, 245, 235, 0.06), rgba(0,0,0,0.10));
+  mix-blend-mode: multiply;
+}
+.hero__portrait-fallback {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  z-index: 1;
+  font-family: var(--display);
+  font-size: clamp(5rem, 11vw, 9rem);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  color: rgba(10, 10, 10, 0.22);
+}
+
+/* Floating name + role badge */
+.hero__portrait-badge {
+  position: absolute;
+  left: -1.5rem;
+  bottom: 2rem;
+  z-index: 4;
+  background: var(--ink);
+  color: var(--bg);
+  padding: 0.9rem 1.2rem;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  box-shadow: 0 20px 40px -15px rgba(0,0,0,0.3);
+  animation: badgeBob 6s ease-in-out infinite;
+}
+@keyframes badgeBob {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%      { transform: translateY(-6px) rotate(-2deg); }
+}
+.hero__portrait-badge-name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+}
+.hero__portrait-badge-role {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+/* Endlessly rotating skill orbit */
+.hero__portrait-orbit {
+  position: absolute;
+  top: -2rem; right: -2rem;
+  width: 140px; height: 140px;
+  z-index: 4;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  animation: orbitSpin 18s linear infinite;
+  box-shadow: 0 20px 40px -10px rgba(255, 77, 46, 0.45);
+  overflow: hidden;
+  text-align: center;
+  padding: 1rem;
+  line-height: 1.4;
+}
+.hero__portrait-orbit span {
+  display: inline-block;
+  margin: 0 0.2rem;
+  white-space: nowrap;
+}
+@keyframes orbitSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
 /* ---------- About ---------- */
@@ -428,7 +568,14 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   gap: 4rem;
   align-items: start;
 }
-.about__col--lead .h-display { max-width: 14ch; margin-bottom: 2.5rem; }
+.about__col--lead .h-display { max-width: 14ch; margin-bottom: 1.5rem; }
+.about__lede {
+  font-size: 1.1rem;
+  color: var(--muted);
+  margin: 0;
+  max-width: 32ch;
+  line-height: 1.5;
+}
 .about__col--body p {
   font-size: 1.05rem;
   color: var(--ink-2);
@@ -436,81 +583,6 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   max-width: 56ch;
 }
 .about__col--body strong { font-weight: 600; }
-
-/* Portrait */
-.portrait {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  max-width: 420px;
-}
-.portrait__frame {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  border-radius: 28px;
-  overflow: hidden;
-  background: linear-gradient(135deg, #f0ede6, #e6e2da);
-  box-shadow:
-    0 30px 60px -30px rgba(0, 0, 0, 0.25),
-    0 0 0 1px var(--line);
-  transform: rotate(-1.2deg);
-  transition: transform 0.6s var(--ease);
-}
-.portrait:hover .portrait__frame { transform: rotate(0deg) scale(1.01); }
-.portrait__frame img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  display: block;
-  filter: contrast(1.08) brightness(1.04) saturate(0.92);
-  transition: transform 1.2s var(--ease), filter 0.5s;
-  position: relative;
-  z-index: 2;
-}
-.portrait:hover .portrait__frame img {
-  transform: scale(1.04);
-  filter: contrast(1.10) brightness(1.05) saturate(0.95);
-}
-.portrait__frame::after {
-  /* Soft editorial vignette + warm wash */
-  content: "";
-  position: absolute; inset: 0;
-  z-index: 3;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse at 50% 30%, transparent 55%, rgba(0,0,0,0.18) 100%),
-    linear-gradient(180deg, rgba(255, 245, 235, 0.06), rgba(0,0,0,0.08));
-  mix-blend-mode: multiply;
-}
-.portrait__fallback {
-  position: absolute; inset: 0;
-  display: grid; place-items: center;
-  z-index: 1;
-  font-family: var(--display);
-  font-size: clamp(4rem, 9vw, 8rem);
-  font-weight: 500;
-  letter-spacing: -0.05em;
-  color: rgba(10, 10, 10, 0.2);
-}
-.portrait__caption {
-  display: flex; flex-direction: column;
-  font-size: 0.85rem;
-  color: var(--muted);
-  padding-left: 0.2rem;
-}
-.portrait__name {
-  font-family: var(--display);
-  font-weight: 600;
-  color: var(--ink);
-  letter-spacing: -0.01em;
-}
-.portrait__role {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 0.95rem;
-  color: var(--accent);
-}
 
 .about__stats {
   margin-top: 3rem;
@@ -960,30 +1032,36 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
 /* ---------- Responsive ---------- */
 @media (max-width: 1024px) {
   .about__grid { grid-template-columns: 1fr; gap: 2.5rem; }
-  .portrait { max-width: 380px; }
   .expertise__grid { grid-template-columns: 1fr 1fr; }
   .projects { grid-template-columns: 1fr; }
   .contact__grid { grid-template-columns: 1fr; gap: 2.5rem; }
   .about__stats { grid-template-columns: 1fr 1fr; }
+  .hero__inner { grid-template-columns: 1fr; gap: 3rem; }
+  .hero__portrait { justify-self: center; max-width: 380px; order: -1; }
+  .hero__portrait-orbit { width: 110px; height: 110px; font-size: 0.7rem; top: -1.25rem; right: -1rem; }
 }
 @media (max-width: 768px) {
   .nav__links { display: none; }
   .nav__toggle { display: flex; }
   .nav__cta .btn { display: none; }
   section { padding: 4rem var(--pad-x); }
-  .hero { padding-top: 7rem; min-height: 90vh; }
+  .hero { padding-top: 6rem; min-height: auto; }
   .expertise__grid { grid-template-columns: 1fr; }
   .timeline__item { grid-template-columns: 80px 1fr; gap: 1.5rem; }
   .form__row { grid-template-columns: 1fr; }
   .footer__big { font-size: clamp(3rem, 18vw, 8rem); }
   .freelance__head { flex-direction: column; align-items: flex-start; }
+  .hero__portrait { max-width: 320px; }
+  .hero__portrait-badge { left: -0.5rem; bottom: 1rem; padding: 0.7rem 1rem; }
+  .hero__portrait-badge-name { font-size: 0.85rem; }
+  .hero__portrait-badge-role { font-size: 0.8rem; }
 }
 @media (max-width: 480px) {
   .about__stats { grid-template-columns: 1fr 1fr; gap: 1rem; }
   .stat__num { font-size: 2rem; }
-  .hero__bottom { flex-direction: column; align-items: flex-start; }
   .hero__scroll { display: none; }
-  .portrait { max-width: 100%; }
+  .hero__portrait { max-width: 280px; }
+  .hero__portrait-orbit { width: 90px; height: 90px; font-size: 0.62rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
