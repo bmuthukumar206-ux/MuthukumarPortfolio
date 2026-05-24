@@ -350,7 +350,7 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   color: var(--accent);
 }
 
-/* Name (left) + Role (right) bracketing the photo */
+/* Name (left) + Role (right) sitting BEHIND the photo */
 .hero__split {
   position: absolute;
   inset: 0;
@@ -362,41 +362,30 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   padding: 0 var(--pad-x);
   z-index: 1;
   pointer-events: none;
-  gap: 1rem;
+  gap: 0;
 }
 .hero__name-part {
   font-family: var(--display);
   font-weight: 700;
-  font-size: clamp(2.5rem, 9vw, 9rem);
+  font-size: clamp(3rem, 13vw, 13rem);
   line-height: 0.85;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.07em;
   color: var(--ink);
   display: flex;
   flex-direction: column;
-  animation: nameBreathe 9s ease-in-out infinite alternate;
+  z-index: 1;
 }
 .hero__name-part span { display: block; }
 .hero__name-part--left { text-align: left; }
 .hero__name-part--right {
   text-align: right;
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.04em;
-  color: var(--accent);
-  animation-delay: -4.5s;
+  color: var(--ink);
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  font-size: clamp(2rem, 8vw, 8rem);
 }
-@keyframes nameBreathe {
-  from { letter-spacing: -0.06em; transform: translateY(0); }
-  to   { letter-spacing: -0.055em; transform: translateY(-3px); }
-}
-.hero__name-part--right {
-  animation-name: roleBreathe;
-}
-@keyframes roleBreathe {
-  from { letter-spacing: -0.04em; transform: translateY(0); }
-  to   { letter-spacing: -0.035em; transform: translateY(3px); }
-}
+.hero__name-part--right span:first-child { color: var(--accent); }
 
 /* Centerpiece portrait — tuned for a TRANSPARENT-BACKGROUND PNG cutout */
 .hero__portrait {
@@ -421,13 +410,14 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   object-fit: cover;
   object-position: center 30%;
   display: block;
-  /* Radial mask: fades the dark corners of the photo into the page,
-     simulating a soft cutout without needing actual transparency */
-
+  border-radius: 22px;
   filter: contrast(1.04) brightness(1.03) saturate(1.03);
   transition: transform 1.2s var(--ease), filter 0.5s;
   position: relative;
   z-index: 2;
+  box-shadow:
+    0 50px 100px -40px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(10, 10, 10, 0.06);
 }
 .hero__portrait:hover img {
   transform: scale(1.03);
