@@ -72,60 +72,61 @@
   <main>
     <!-- HERO -->
     <section id="home" class="hero">
-      <div class="hero__blob hero__blob--1"></div>
-      <div class="hero__blob hero__blob--2"></div>
+      <!-- soft decorative arc -->
+      <svg class="hero__decor" viewBox="0 0 1400 800" aria-hidden="true" preserveAspectRatio="none">
+        <path d="M -50,600 Q 350,200 700,400 T 1450,250" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 6" />
+        <circle cx="350" cy="280" r="280" fill="none" stroke="currentColor" stroke-width="1" opacity="0.4" />
+      </svg>
 
-      <div class="hero__inner">
-        <div class="hero__content">
-          <div class="hero__meta">
-            <span class="hero__meta-dot"></span>
-            <span>Available for freelance · 2026</span>
-          </div>
-
-          <h1 class="hero__title">
-            <span class="hero__line" data-reveal>Building</span>
-            <span class="hero__line" data-reveal><em>thoughtful</em></span>
-            <span class="hero__line hero__line--accent" data-reveal>Salesforce<span class="hero__dot">.</span></span>
-          </h1>
-
-          <div class="hero__intro" data-reveal>
-            <p>
-              I'm <strong>Muthukumar B</strong> — a <strong>Salesforce Developer</strong>
-              crafting clean, scalable solutions with
-              <span class="num">Apex</span>, <span class="num">LWC</span>,
-              <span class="num">Flows</span>, <span class="num">Triggers</span> and
-              <span class="num">Visualforce</span>.
-            </p>
-          </div>
-        </div>
-
-        <figure class="hero__portrait" data-reveal>
-          <div class="hero__portrait-frame">
-            <img src="assets/profile.jpg" alt="Muthukumar B — Salesforce Developer" loading="eager" onerror="this.style.display='none'" />
-            <div class="hero__portrait-fallback" aria-hidden="true"><span>M·B</span></div>
-          </div>
-          <div class="hero__portrait-badge">
-            <span class="hero__portrait-badge-name">Muthukumar B</span>
-            <span class="hero__portrait-badge-role">Salesforce Developer</span>
-          </div>
-          <div class="hero__portrait-orbit" aria-hidden="true">
-            <span>Apex</span><span>·</span>
-            <span>LWC</span><span>·</span>
-            <span>Flow</span><span>·</span>
-            <span>Visualforce</span><span>·</span>
-            <span>Triggers</span><span>·</span>
-            <span>SOQL</span><span>·</span>
-          </div>
-        </figure>
+      <!-- top-left role label -->
+      <div class="hero__label" data-reveal>
+        <span class="hero__label-dot"></span>
+        <span class="hero__label-line">Freelance</span>
+        <span class="hero__label-line hero__label-line--accent">Salesforce Developer</span>
       </div>
 
+      <!-- giant name behind photo -->
+      <div class="hero__name" aria-hidden="true">
+        <span class="hero__name-part hero__name-part--left" data-reveal>MUTHU</span>
+        <span class="hero__name-part hero__name-part--right" data-reveal>KUMAR</span>
+      </div>
+
+      <!-- centerpiece portrait -->
+      <figure class="hero__portrait" data-reveal>
+        <img src="assets/media.jpg"
+             alt="Muthukumar B — Salesforce Developer"
+             loading="eager"
+             onerror="this.style.display='none'" />
+        <div class="hero__portrait-fallback" aria-hidden="true"><span>M·B</span></div>
+      </figure>
+
+      <!-- bottom-right scroll cue -->
       <a href="#about" class="hero__scroll" data-magnetic>
-        <span>Scroll</span>
-        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
-          <circle cx="20" cy="20" r="19"/>
-          <path d="M14 18l6 6 6-6M20 12v12"/>
+        <span>Scroll down</span>
+        <svg width="24" height="40" viewBox="0 0 24 40" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 4 V34 M5 27 L12 34 L19 27" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </a>
+
+      <!-- bottom-left tagline / endless ticker -->
+      <div class="hero__ticker" aria-hidden="true">
+        <div class="hero__ticker-track">
+          <span>Apex</span><span>·</span>
+          <span>LWC</span><span>·</span>
+          <span>Flow Builder</span><span>·</span>
+          <span>Triggers</span><span>·</span>
+          <span>Visualforce</span><span>·</span>
+          <span>SOQL</span><span>·</span>
+          <span>Configuration</span><span>·</span>
+          <span>Apex</span><span>·</span>
+          <span>LWC</span><span>·</span>
+          <span>Flow Builder</span><span>·</span>
+          <span>Triggers</span><span>·</span>
+          <span>Visualforce</span><span>·</span>
+          <span>SOQL</span><span>·</span>
+          <span>Configuration</span><span>·</span>
+        </div>
+      </div>
     </section>
 
     <!-- ABOUT -->
