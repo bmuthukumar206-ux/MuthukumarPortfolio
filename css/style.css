@@ -379,21 +379,19 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   to   { letter-spacing: -0.06em; transform: translateX(-4px); }
 }
 
-/* Centerpiece portrait — tuned for a pre-edited dark-background portrait */
+/* Centerpiece portrait — tuned for a TRANSPARENT-BACKGROUND PNG cutout */
 .hero__portrait {
   position: relative;
   margin: 0;
   z-index: 3;
-  width: clamp(260px, 34vw, 480px);
+  width: clamp(280px, 38vw, 540px);
   aspect-ratio: 4 / 5;
-  border-radius: 22px;
-  overflow: hidden;
-  background: radial-gradient(ellipse at 50% 35%, #2a2a2a, #0a0a0a 75%);
-  box-shadow:
-    0 60px 120px -40px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 0 0 8px rgba(10, 10, 10, 0.02);
+  background: transparent;
+  overflow: visible;
   animation: portraitFloat 6s ease-in-out infinite alternate;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
 }
 @keyframes portraitFloat {
   from { transform: translateY(0) rotate(0deg); }
@@ -401,26 +399,24 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
 }
 .hero__portrait img {
   width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: center 30%;
+  object-fit: contain;
+  object-position: center bottom;
   display: block;
-  /* Light touch — the photo is already professionally edited */
-  filter: contrast(1.03) brightness(1.02) saturate(1.02);
+  /* Drop-shadows hug the actual silhouette of a transparent PNG */
+  filter:
+    contrast(1.03) brightness(1.02) saturate(1.02)
+    drop-shadow(0 24px 40px rgba(0, 0, 0, 0.28))
+    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
   transition: transform 1.2s var(--ease), filter 0.5s;
   position: relative;
   z-index: 2;
 }
 .hero__portrait:hover img {
-  transform: scale(1.04);
-  filter: contrast(1.05) brightness(1.04) saturate(1.05);
-}
-/* Subtle bottom fade so the portrait blends into the page instead of cutting hard */
-.hero__portrait::after {
-  content: "";
-  position: absolute; inset: 0;
-  z-index: 3;
-  pointer-events: none;
-  background: linear-gradient(180deg, transparent 70%, rgba(10,10,10,0.25) 100%);
+  transform: scale(1.03);
+  filter:
+    contrast(1.05) brightness(1.04) saturate(1.05)
+    drop-shadow(0 28px 48px rgba(0, 0, 0, 0.32))
+    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.18));
 }
 .hero__portrait-fallback {
   position: absolute; inset: 0;
@@ -430,7 +426,7 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   font-size: clamp(5rem, 12vw, 9rem);
   font-weight: 600;
   letter-spacing: -0.05em;
-  color: rgba(255, 255, 255, 0.18);
+  color: rgba(10, 10, 10, 0.15);
 }
 
 /* Bottom-right scroll cue */
