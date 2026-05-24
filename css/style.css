@@ -345,12 +345,16 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   line-height: 1.25;
 }
 .hero__label-role {
+  display: inline-block;
+  align-self: flex-start;
   font-family: var(--serif);
   font-weight: 400;
   font-size: 2.15rem;
-  color: var(--accent);
+  color: #fff;
+  background: var(--accent);
   letter-spacing: -0.01em;
-  padding-left: -1.75rem;
+  padding: 0.18em 0.55em 0.28em;
+  line-height: 1;
 }
 
 /* MUTHU on the LEFT of the photo, KUMAR on the RIGHT */
@@ -373,6 +377,13 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   color: var(--ink);
   white-space: nowrap;
   text-transform: uppercase;
+}
+.hero__name-block {
+  display: inline-block;
+  color: #fff;
+  background: var(--accent);
+  padding: 0.08em 0.18em 0.16em;
+  line-height: 1;
 }
 .hero__name {
   justify-content: flex-start;
