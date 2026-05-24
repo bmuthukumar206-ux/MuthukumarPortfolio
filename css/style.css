@@ -423,8 +423,7 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   display: block;
   /* Radial mask: fades the dark corners of the photo into the page,
      simulating a soft cutout without needing actual transparency */
-  -webkit-mask-image: radial-gradient(ellipse 75% 92% at center 48%, #000 45%, transparent 88%);
-          mask-image: radial-gradient(ellipse 75% 92% at center 48%, #000 45%, transparent 88%);
+
   filter: contrast(1.04) brightness(1.03) saturate(1.03);
   transition: transform 1.2s var(--ease), filter 0.5s;
   position: relative;
