@@ -121,39 +121,8 @@
     $$('[data-counter]').forEach((el) => cio.observe(el));
   }
 
-  /* ---------- Custom cursor + magnetic ---------- */
-  const cursor = $('[data-cursor]');
-  const dot = $('[data-cursor-dot]');
-  const isCoarse = window.matchMedia('(pointer: coarse)').matches;
-
-  if (cursor && dot && !isCoarse) {
-    let mx = window.innerWidth / 2;
-    let my = window.innerHeight / 2;
-    let cx = mx, cy = my;
-    let dx = mx, dy = my;
-
-    window.addEventListener('mousemove', (e) => {
-      mx = e.clientX; my = e.clientY;
-    });
-
-    const render = () => {
-      cx += (mx - cx) * 0.15;
-      cy += (my - cy) * 0.15;
-      dx += (mx - dx) * 0.5;
-      dy += (my - dy) * 0.5;
-      cursor.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`;
-      dot.style.transform = `translate(${dx}px, ${dy}px) translate(-50%, -50%)`;
-      requestAnimationFrame(render);
-    };
-    requestAnimationFrame(render);
-
-    $$('a, button, [data-magnetic]').forEach((el) => {
-      el.addEventListener('mouseenter', () => cursor.classList.add('is-hover'));
-      el.addEventListener('mouseleave', () => cursor.classList.remove('is-hover'));
-    });
-  }
-
   /* ---------- Magnetic buttons ---------- */
+  const isCoarse = window.matchMedia('(pointer: coarse)').matches;
   if (!isCoarse && !prefersReduced) {
     $$('[data-magnetic]').forEach((el) => {
       el.addEventListener('mousemove', (e) => {

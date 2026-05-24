@@ -76,34 +76,6 @@ em {
   opacity: 0.7;
 }
 
-/* ---------- Cursor ---------- */
-.cursor,
-.cursor-dot {
-  position: fixed;
-  top: 0; left: 0;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  mix-blend-mode: difference;
-}
-.cursor {
-  width: 28px; height: 28px;
-  border: 1px solid #fff;
-  border-radius: 50%;
-  transition: width 0.3s var(--ease-soft), height 0.3s var(--ease-soft), background 0.3s;
-}
-.cursor-dot {
-  width: 5px; height: 5px;
-  background: #fff;
-  border-radius: 50%;
-}
-.cursor.is-hover {
-  width: 60px; height: 60px;
-  background: rgba(255,255,255,0.06);
-}
-@media (max-width: 900px) { .cursor, .cursor-dot { display: none; } body { cursor: auto; } }
-@media (min-width: 901px) { body { cursor: none; } a, button, [data-magnetic] { cursor: none; } }
-
 /* ---------- Loader ---------- */
 .loader {
   position: fixed; inset: 0;

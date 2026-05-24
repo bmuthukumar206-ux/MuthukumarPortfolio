@@ -19,10 +19,6 @@
 </head>
 
 <body>
-  <!-- Custom cursor -->
-  <div class="cursor" data-cursor></div>
-  <div class="cursor-dot" data-cursor-dot></div>
-
   <!-- Loader -->
   <div class="loader" data-loader>
     <div class="loader__inner">
@@ -93,10 +89,10 @@
 
       <!-- centerpiece portrait -->
       <figure class="hero__portrait" data-reveal>
-        <img src="assets/media.jpg"
+        <img src="assets/media.png"
              alt="Portrait of Muthukumar B, Salesforce Developer"
              loading="eager"
-             onerror="this.style.display='none'" />
+             onerror="if(!this.dataset.fallback){this.dataset.fallback=1;this.src='assets/media.jpg'}else{this.style.display='none'}" />
         <div class="hero__portrait-fallback" aria-hidden="true"><span>M·B</span></div>
       </figure>
 
