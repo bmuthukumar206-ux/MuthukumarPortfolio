@@ -367,16 +367,12 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   line-height: 1.25;
 }
 .hero__label-role {
-  display: inline-block;
-  align-self: flex-start;
   font-family: var(--serif);
   font-weight: 400;
   font-size: 2.15rem;
-  color: #fff;
-  background: var(--accent);
+  color: var(--accent);
   letter-spacing: -0.01em;
-  padding: 0.18em 0.55em 0.28em;
-  line-height: 1;
+  line-height: 1.1;
 }
 
 /* MUTHU on the LEFT of the photo, KUMAR on the RIGHT */
@@ -402,9 +398,9 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
 }
 .hero__name-block {
   display: inline-block;
-  color: #fff;
-  background: var(--accent);
-  padding: 0.08em 0.18em 0.16em;
+  color: inherit;
+  background: transparent;
+  padding: 0;
   line-height: 1;
 }
 .hero__name {
@@ -1094,21 +1090,65 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
 
 /* ---------- Tighter mobile overrides ---------- */
 @media (max-width: 768px) {
-  /* keep theme toggle visible even though resume btn is hidden */
   .nav__cta .theme-toggle { display: grid; }
-  /* pull the giant names back inside the viewport on mobile (inline styles use !important to win) */
-  .hero__name { left: 0 !important; }
-  .hero__namek { right: 0 !important; }
   .to-top { bottom: 1rem; right: 1rem; width: 40px; height: 40px; }
+
+  /* Restructure hero into a clean vertical stack so the giant text isn't clipped */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    gap: 0.6rem;
+    padding: 6.5rem var(--pad-x) 3rem;
+    min-height: auto;
+  }
+  .hero__decor { display: none; }
+
+  .hero__label {
+    position: static !important;
+    order: 1;
+    width: 100%;
+    align-items: center;
+    top: auto !important;
+    left: auto !important;
+    margin-bottom: 0.5rem;
+  }
+  .hero__label-role { font-size: 1.4rem; }
+
+  .hero__name,
+  .hero__namek {
+    position: static !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+    width: 100%;
+    padding: 0;
+    justify-content: center;
+    font-size: clamp(2.2rem, 11vw, 4rem);
+    line-height: 0.95;
+    animation: none;
+  }
+  .hero__name { order: 2; }
+  .hero__namek { order: 4; margin-top: 0.2rem; }
+
+  .hero__portrait {
+    order: 3;
+    margin: 0.5rem auto;
+    width: clamp(220px, 62vw, 340px);
+  }
 }
+
 @media (max-width: 480px) {
   .nav { padding: 0.9rem var(--pad-x); }
   .nav__logo-text { display: none; }
-  .hero__label-role { font-size: 1.05rem; padding: 0.18em 0.5em 0.26em; }
+  .hero { padding: 5.5rem var(--pad-x) 2.5rem; }
+  .hero__label-role { font-size: 1.2rem; }
   .hero__name,
-  .hero__namek { font-size: clamp(2.2rem, 16vw, 4.5rem); }
-  .hero__name-block { padding: 0.08em 0.14em 0.14em; }
-  .hero__portrait { width: clamp(180px, 62vw, 280px); }
+  .hero__namek { font-size: clamp(2rem, 13vw, 3.5rem); }
+  .hero__portrait { width: clamp(180px, 70vw, 280px); }
   .about__stats { gap: 0.8rem 1rem; }
   .stat__label { font-size: 0.65rem; letter-spacing: 0.12em; }
   .timeline__item { grid-template-columns: 60px 1fr; gap: 1rem; padding: 1.5rem 0; }

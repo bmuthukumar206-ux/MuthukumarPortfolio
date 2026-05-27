@@ -81,25 +81,15 @@
     });
   }
 
-  /* ---------- Theme toggle (light/dark, persisted) ---------- */
+  /* Theme toggle is wired up in the inline <head> script for FOUC prevention. */
   const themeBtn = $('[data-theme-toggle]');
-  const root = document.documentElement;
-  const applyTheme = (t) => {
-    if (t === 'dark') root.setAttribute('data-theme', 'dark');
-    else root.removeAttribute('data-theme');
-    try { localStorage.setItem('theme', t); } catch (_) {}
-    if (themeBtn) themeBtn.setAttribute('aria-pressed', t === 'dark');
-  };
-  // Initial: stored preference, else system preference
-  let savedTheme = null;
-  try { savedTheme = localStorage.getItem('theme'); } catch (_) {}
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  applyTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
   if (themeBtn) {
-    themeBtn.addEventListener('click', () => {
-      const isDark = root.getAttribute('data-theme') === 'dark';
-      applyTheme(isDark ? 'light' : 'dark');
-    });
+    const syncAria = () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      themeBtn.setAttribute('aria-pressed', isDark);
+    };
+    syncAria();
+    new MutationObserver(syncAria).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   }
 
   /* ---------- Mobile menu ---------- */
