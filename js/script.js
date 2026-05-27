@@ -45,13 +45,62 @@
     }
   };
 
-  /* ---------- Nav scroll state ---------- */
+  /* ---------- Nav scroll state + hide-on-scroll-down ---------- */
   const nav = $('[data-nav]');
+  const toTop = $('[data-to-top]');
+  let lastY = window.scrollY;
+  let ticking = false;
   const onScroll = () => {
-    if (!nav) return;
-    nav.classList.toggle('is-scrolled', window.scrollY > 30);
+    const y = window.scrollY;
+    if (nav) {
+      nav.classList.toggle('is-scrolled', y > 30);
+      // Hide when scrolling down past the hero, reveal on scroll up
+      const goingDown = y > lastY + 4;
+      const goingUp = y < lastY - 4;
+      if (goingDown && y > 140) nav.classList.add('is-hidden');
+      else if (goingUp) nav.classList.remove('is-hidden');
+    }
+    if (toTop) toTop.classList.toggle('is-visible', y > 500);
+    lastY = y;
+    ticking = false;
   };
-  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        requestAnimationFrame(onScroll);
+        ticking = true;
+      }
+    },
+    { passive: true }
+  );
+
+  if (toTop) {
+    toTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  /* ---------- Theme toggle (light/dark, persisted) ---------- */
+  const themeBtn = $('[data-theme-toggle]');
+  const root = document.documentElement;
+  const applyTheme = (t) => {
+    if (t === 'dark') root.setAttribute('data-theme', 'dark');
+    else root.removeAttribute('data-theme');
+    try { localStorage.setItem('theme', t); } catch (_) {}
+    if (themeBtn) themeBtn.setAttribute('aria-pressed', t === 'dark');
+  };
+  // Initial: stored preference, else system preference
+  let savedTheme = null;
+  try { savedTheme = localStorage.getItem('theme'); } catch (_) {}
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+  if (themeBtn) {
+    themeBtn.addEventListener('click', () => {
+      const isDark = root.getAttribute('data-theme') === 'dark';
+      applyTheme(isDark ? 'light' : 'dark');
+    });
+  }
 
   /* ---------- Mobile menu ---------- */
   const toggle = $('[data-nav-toggle]');
