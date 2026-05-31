@@ -1,7 +1,7 @@
 /* ============================================================
    Hero 3D Scene — Three.js
-   Floating extruded 3D letters of the name MUTHUKUMAR,
-   orbiting with mouse parallax + scroll-driven camera.
+   Floating extruded 3D letters that ASSEMBLE into "MUTHUKUMAR"
+   as you scroll down. Multi-light rig + emissive accent.
    ============================================================ */
 
 import * as THREE from 'three';
@@ -21,8 +21,10 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
   const COLORS = {
     accent: 0xff4d2e,
+    accentSoft: 0xff8a66,
     ink: 0x0a0a0a,
     light: 0xffffff,
+    cool: 0x6aa6ff, // subtle blue rim for contrast
   };
 
   let width = canvas.clientWidth || window.innerWidth;
@@ -30,8 +32,9 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
   const scene = new THREE.Scene();
 
+  const CAM_Z = 9;
   const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-  camera.position.set(0, 0, 9);
+  camera.position.set(0, 0, CAM_Z);
 
   const renderer = new THREE.WebGLRenderer({
     canvas,
@@ -41,33 +44,59 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
   });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, lowPower ? 1.5 : 2));
   renderer.setSize(width, height, false);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.15;
 
-  /* ---------- Lighting ---------- */
-  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
-  const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-  dirLight.position.set(4, 6, 5);
-  scene.add(dirLight);
-  const accentLight = new THREE.PointLight(COLORS.accent, 1.6, 22);
-  accentLight.position.set(0, 0, 3);
-  scene.add(accentLight);
-  const rimLight = new THREE.PointLight(0xffffff, 0.6, 18);
-  rimLight.position.set(-5, 4, -3);
-  scene.add(rimLight);
+  /* ---------- Lighting rig ----------
+     Soft ambient + bright key + two fills + warm accent + cool rim,
+     so the bevels on the extruded letters actually catch highlights. */
+  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
 
-  /* ---------- Materials (shared across letters) ---------- */
+  const keyLight = new THREE.DirectionalLight(0xffffff, 1.4);
+  keyLight.position.set(5, 7, 6);
+  scene.add(keyLight);
+
+  const fillLeft = new THREE.PointLight(0xffffff, 1.1, 28);
+  fillLeft.position.set(-7, 2, 4);
+  scene.add(fillLeft);
+
+  const fillRight = new THREE.PointLight(0xffffff, 0.9, 26);
+  fillRight.position.set(7, -2, 4);
+  scene.add(fillRight);
+
+  const accentCenter = new THREE.PointLight(COLORS.accent, 2.6, 20);
+  accentCenter.position.set(0, 0, 3);
+  scene.add(accentCenter);
+
+  const accentBack = new THREE.PointLight(COLORS.accentSoft, 1.8, 18);
+  accentBack.position.set(-3, 4, -5);
+  scene.add(accentBack);
+
+  const coolRim = new THREE.PointLight(COLORS.cool, 0.9, 20);
+  coolRim.position.set(4, -4, -4);
+  scene.add(coolRim);
+
+  /* ---------- Materials ---------- */
   const matAccent = new THREE.MeshStandardMaterial({
-    color: COLORS.accent, metalness: 0.3, roughness: 0.4, flatShading: true,
+    color: COLORS.accent,
+    metalness: 0.45,
+    roughness: 0.28,
+    emissive: COLORS.accent,
+    emissiveIntensity: 0.35,
   });
   const matInk = new THREE.MeshStandardMaterial({
-    color: COLORS.ink, metalness: 0.35, roughness: 0.55, flatShading: true,
+    color: COLORS.ink,
+    metalness: 0.6,
+    roughness: 0.32,
   });
   const matWire = new THREE.MeshBasicMaterial({
-    color: COLORS.accent, wireframe: true, transparent: true, opacity: 0.65,
+    color: COLORS.accent, wireframe: true, transparent: true, opacity: 0.75,
   });
   const matWireInk = new THREE.MeshBasicMaterial({
-    color: COLORS.ink, wireframe: true, transparent: true, opacity: 0.45,
+    color: COLORS.ink, wireframe: true, transparent: true, opacity: 0.5,
   });
-  const palette = [matAccent, matInk, matAccent, matWire, matInk, matAccent, matWireInk, matAccent, matInk, matWire];
+  // Palette ordered so the accent letters dominate visually
+  const palette = [matAccent, matInk, matAccent, matWire, matAccent, matInk, matWireInk, matAccent, matInk, matAccent];
 
   /* ---------- Particle dust ---------- */
   if (!lowPower) {
@@ -82,16 +111,18 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
     starsGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     const starsMat = new THREE.PointsMaterial({
       color: COLORS.accent,
-      size: 0.04,
+      size: 0.05,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.6,
     });
     scene.add(new THREE.Points(starsGeo, starsMat));
   }
 
-  /* ---------- 3D Letters of the name ---------- */
+  /* ---------- 3D letters ---------- */
   const NAME = 'MUTHUKUMAR';
-  const orbiters = []; // mesh container animated each frame
+  const LETTER_SIZE = 0.85;
+  const BASE_SPACING = 1.05; // tightness when assembled
+  const orbiters = [];
 
   const placeMesh = (mesh, i, total) => {
     const angle = (i / total) * Math.PI * 2 + Math.random() * 0.3;
@@ -113,30 +144,29 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
   const buildLetters = (font) => {
     const total = NAME.length;
     for (let i = 0; i < total; i++) {
-      const char = NAME[i];
-      const geo = new TextGeometry(char, {
+      const geo = new TextGeometry(NAME[i], {
         font,
-        size: 0.85,
-        height: 0.28,    // r160 uses `height` for extrude depth
-        depth: 0.28,     // forward-compatible alias used in newer Three.js
+        size: LETTER_SIZE,
+        height: 0.3,
+        depth: 0.3,
         curveSegments: 6,
         bevelEnabled: true,
-        bevelThickness: 0.04,
-        bevelSize: 0.03,
+        bevelThickness: 0.045,
+        bevelSize: 0.035,
         bevelOffset: 0,
-        bevelSegments: 2,
+        bevelSegments: 3,
       });
-      geo.center(); // pivot at visual center so spins look natural
-
-      const mat = palette[i % palette.length];
-      const mesh = new THREE.Mesh(geo, mat);
+      geo.center();
+      const mesh = new THREE.Mesh(geo, palette[i % palette.length]);
       placeMesh(mesh, i, total);
+      mesh.userData.letterIndex = i;
+      mesh.userData.totalLetters = total;
       scene.add(mesh);
       orbiters.push(mesh);
     }
   };
 
-  // Fallback if font fails: a few simple shapes so the canvas isn't empty
+  // Fallback if font load fails
   const buildFallbackShapes = () => {
     const geos = [
       new THREE.IcosahedronGeometry(0.55, 0),
@@ -192,7 +222,19 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
     attributes: true, attributeFilter: ['data-theme'],
   });
 
-  /* ---------- Resize ---------- */
+  /* ---------- Resize & fit ---------- */
+  let fitSpacing = BASE_SPACING;
+  let fitScale = 1;
+  const computeFit = () => {
+    const fov = camera.fov * Math.PI / 180;
+    const visibleH = 2 * Math.tan(fov / 2) * CAM_Z;
+    const visibleW = visibleH * camera.aspect;
+    const targetW = visibleW * 0.82;
+    const naturalW = (NAME.length - 1) * BASE_SPACING + LETTER_SIZE;
+    fitScale = Math.min(1, targetW / naturalW);
+    fitSpacing = BASE_SPACING * fitScale;
+  };
+
   const resize = () => {
     width = canvas.clientWidth;
     height = canvas.clientHeight;
@@ -200,6 +242,7 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     renderer.setSize(width, height, false);
+    computeFit();
   };
   window.addEventListener('resize', resize);
   requestAnimationFrame(resize);
@@ -219,9 +262,13 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
     if (hero) {
       new IntersectionObserver((entries) => {
         entries.forEach((e) => { heroOnscreen = e.isIntersecting; });
-      }, { rootMargin: '100px' }).observe(hero);
+      }, { rootMargin: '200px' }).observe(hero);
     }
   }
+
+  // ease-in-out cubic
+  const ease = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  const lerp = (a, b, t) => a + (b - a) * t;
 
   let firstFrame = true;
 
@@ -234,23 +281,57 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
     mouseX += (targetMouseX - mouseX) * 0.05;
     mouseY += (targetMouseY - mouseY) * 0.05;
 
-    // Orbit + spin
+    // Assemble quickly — completed by 30% of viewport scroll so the name is
+    // still on-screen when it locks into place.
+    const assemble = Math.min(scrollY / (window.innerHeight * 0.3), 1);
+    const a = ease(assemble);
+
     for (let i = 0; i < orbiters.length; i++) {
       const s = orbiters[i];
       const u = s.userData;
+
+      // Scattered (orbit) position
       const angle = u.baseAngle + t * u.orbitSpeed * u.orbitDir;
-      s.position.x = Math.cos(angle) * u.radius;
-      s.position.z = Math.sin(angle) * u.radius - 1;
-      s.position.y = u.yOffset + Math.sin(t * 0.6 + u.floatPhase) * 0.35;
-      s.rotation.x += u.rotSpeedX;
-      s.rotation.y += u.rotSpeedY;
+      const sx = Math.cos(angle) * u.radius;
+      const sz = Math.sin(angle) * u.radius - 1;
+      const sy = u.yOffset + Math.sin(t * 0.6 + u.floatPhase) * 0.35;
+
+      if (u.letterIndex !== undefined) {
+        // Target (assembled) position — spell MUTHUKUMAR above the portrait,
+        // so the photo doesn't block the middle letters.
+        const tx = (u.letterIndex - (u.totalLetters - 1) / 2) * fitSpacing;
+        const ty = 1.8;
+        const tz = 0;
+
+        s.position.x = lerp(sx, tx, a);
+        s.position.y = lerp(sy, ty, a);
+        s.position.z = lerp(sz, tz, a);
+
+        // Spin freely when scattered, freeze upright when assembled
+        const spinAmt = 1 - a;
+        s.rotation.x += u.rotSpeedX * spinAmt;
+        s.rotation.y += u.rotSpeedY * spinAmt;
+        s.rotation.x = lerp(s.rotation.x, 0, a);
+        s.rotation.y = lerp(s.rotation.y, 0, a);
+        s.rotation.z = lerp(s.rotation.z, 0, a);
+
+        // Scale: full when scattered, fit-to-viewport when assembled
+        const sc = lerp(1, fitScale, a);
+        s.scale.setScalar(sc);
+      } else {
+        // Fallback shapes — just orbit, no assembly
+        s.position.set(sx, sy, sz);
+        s.rotation.x += u.rotSpeedX;
+        s.rotation.y += u.rotSpeedY;
+      }
     }
 
-    const scrollFactor = Math.min(scrollY / 800, 1);
-
-    camera.position.x += (mouseX * 2.2 - camera.position.x) * 0.04;
-    camera.position.y += (-mouseY * 1.4 - scrollFactor * 1.2 - camera.position.y) * 0.04;
-    camera.lookAt(0, 0, -1);
+    // Camera: parallax while scattered, ease back to straight-on for the name reveal
+    const targetCamX = mouseX * 2.2 * (1 - a);
+    const targetCamY = -mouseY * 1.4 * (1 - a);
+    camera.position.x += (targetCamX - camera.position.x) * 0.05;
+    camera.position.y += (targetCamY - camera.position.y) * 0.05;
+    camera.lookAt(0, 0, 0);
 
     renderer.render(scene, camera);
 
