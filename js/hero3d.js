@@ -1,12 +1,11 @@
 /* ============================================================
    Hero 3D Scene — Three.js
-   Floating extruded 3D letters that ASSEMBLE into "MUTHUKUMAR"
-   as you scroll down. Multi-light rig + emissive accent.
+   Floating low-poly shapes with multi-light rig + mouse/touch
+   parallax and scroll-driven camera drift. Letters reverted
+   to static HTML (see .hero__name / .hero__namek).
    ============================================================ */
 
 import * as THREE from 'three';
-import { FontLoader } from 'three/addons/loaders/FontLoader.js';
-import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
 (() => {
   const canvas = document.querySelector('[data-hero-3d]');
@@ -24,7 +23,7 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
     accentSoft: 0xff8a66,
     ink: 0x0a0a0a,
     light: 0xffffff,
-    cool: 0x6aa6ff, // subtle blue rim for contrast
+    cool: 0x6aa6ff,
   };
 
   let width = canvas.clientWidth || window.innerWidth;
@@ -47,9 +46,7 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.15;
 
-  /* ---------- Lighting rig ----------
-     Soft ambient + bright key + two fills + warm accent + cool rim,
-     so the bevels on the extruded letters actually catch highlights. */
+  /* ---------- Lighting rig ---------- */
   scene.add(new THREE.AmbientLight(0xffffff, 0.5));
 
   const keyLight = new THREE.DirectionalLight(0xffffff, 1.4);
@@ -95,7 +92,6 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
   const matWireInk = new THREE.MeshBasicMaterial({
     color: COLORS.ink, wireframe: true, transparent: true, opacity: 0.5,
   });
-  // Palette ordered so the accent letters dominate visually
   const palette = [matAccent, matInk, matAccent, matWire, matAccent, matInk, matWireInk, matAccent, matInk, matAccent];
 
   /* ---------- Particle dust ---------- */
@@ -118,10 +114,7 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
     scene.add(new THREE.Points(starsGeo, starsMat));
   }
 
-  /* ---------- 3D letters ---------- */
-  const NAME = 'MUTHUKUMAR';
-  const LETTER_SIZE = 0.85;
-  const BASE_SPACING = 1.05; // tightness when assembled
+  /* ---------- Floating shapes ---------- */
   const orbiters = [];
 
   const placeMesh = (mesh, i, total) => {
@@ -139,34 +132,10 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
       rotSpeedY: (Math.random() - 0.5) * 0.011,
       floatPhase: Math.random() * Math.PI * 2,
     };
+    const scale = 0.8 + Math.random() * 0.5;
+    mesh.scale.setScalar(scale);
   };
 
-  const buildLetters = (font) => {
-    const total = NAME.length;
-    for (let i = 0; i < total; i++) {
-      const geo = new TextGeometry(NAME[i], {
-        font,
-        size: LETTER_SIZE,
-        height: 0.3,
-        depth: 0.3,
-        curveSegments: 6,
-        bevelEnabled: true,
-        bevelThickness: 0.045,
-        bevelSize: 0.035,
-        bevelOffset: 0,
-        bevelSegments: 3,
-      });
-      geo.center();
-      const mesh = new THREE.Mesh(geo, palette[i % palette.length]);
-      placeMesh(mesh, i, total);
-      mesh.userData.letterIndex = i;
-      mesh.userData.totalLetters = total;
-      scene.add(mesh);
-      orbiters.push(mesh);
-    }
-  };
-
-  // Decorative floating shapes — coexist with letters, always orbit (never assemble)
   const buildShapes = (count) => {
     const geos = [
       new THREE.IcosahedronGeometry(0.55, 0),
@@ -179,25 +148,12 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
     for (let i = 0; i < count; i++) {
       const mesh = new THREE.Mesh(geos[i % geos.length], palette[i % palette.length]);
       placeMesh(mesh, i, count);
-      // No letterIndex → animation loop treats this as decoration, no assembly
       scene.add(mesh);
       orbiters.push(mesh);
     }
   };
 
-  // Always show the floating shapes as decor
-  buildShapes(lowPower ? 5 : 8);
-
-  // Load the font and add the assembling letters on top
-  const fontLoader = new FontLoader();
-  fontLoader.load(
-    'https://unpkg.com/three@0.160.0/examples/fonts/helvetiker_bold.typeface.json',
-    (font) => buildLetters(font),
-    undefined,
-    (err) => {
-      console.warn('hero3d: font load failed, scene continues with shapes only', err);
-    }
-  );
+  buildShapes(lowPower ? 7 : 11);
 
   /* ---------- Mouse / touch parallax ---------- */
   let targetMouseX = 0, targetMouseY = 0;
@@ -227,19 +183,7 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
     attributes: true, attributeFilter: ['data-theme'],
   });
 
-  /* ---------- Resize & fit ---------- */
-  let fitSpacing = BASE_SPACING;
-  let fitScale = 1;
-  const computeFit = () => {
-    const fov = camera.fov * Math.PI / 180;
-    const visibleH = 2 * Math.tan(fov / 2) * CAM_Z;
-    const visibleW = visibleH * camera.aspect;
-    const targetW = visibleW * 0.82;
-    const naturalW = (NAME.length - 1) * BASE_SPACING + LETTER_SIZE;
-    fitScale = Math.min(1, targetW / naturalW);
-    fitSpacing = BASE_SPACING * fitScale;
-  };
-
+  /* ---------- Resize ---------- */
   const resize = () => {
     width = canvas.clientWidth;
     height = canvas.clientHeight;
@@ -247,7 +191,6 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     renderer.setSize(width, height, false);
-    computeFit();
   };
   window.addEventListener('resize', resize);
   requestAnimationFrame(resize);
@@ -271,10 +214,6 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
     }
   }
 
-  // ease-in-out cubic
-  const ease = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-  const lerp = (a, b, t) => a + (b - a) * t;
-
   let firstFrame = true;
 
   const tick = () => {
@@ -286,57 +225,21 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
     mouseX += (targetMouseX - mouseX) * 0.05;
     mouseY += (targetMouseY - mouseY) * 0.05;
 
-    // Assemble quickly — completed by 30% of viewport scroll so the name is
-    // still on-screen when it locks into place.
-    const assemble = Math.min(scrollY / (window.innerHeight * 0.3), 1);
-    const a = ease(assemble);
-
     for (let i = 0; i < orbiters.length; i++) {
       const s = orbiters[i];
       const u = s.userData;
-
-      // Scattered (orbit) position
       const angle = u.baseAngle + t * u.orbitSpeed * u.orbitDir;
-      const sx = Math.cos(angle) * u.radius;
-      const sz = Math.sin(angle) * u.radius - 1;
-      const sy = u.yOffset + Math.sin(t * 0.6 + u.floatPhase) * 0.35;
-
-      if (u.letterIndex !== undefined) {
-        // Target (assembled) position — spell MUTHUKUMAR BELOW the portrait,
-        // like a name plate beneath the photo.
-        const tx = (u.letterIndex - (u.totalLetters - 1) / 2) * fitSpacing;
-        const ty = -2.4;
-        const tz = 0;
-
-        s.position.x = lerp(sx, tx, a);
-        s.position.y = lerp(sy, ty, a);
-        s.position.z = lerp(sz, tz, a);
-
-        // Spin freely when scattered, freeze upright when assembled
-        const spinAmt = 1 - a;
-        s.rotation.x += u.rotSpeedX * spinAmt;
-        s.rotation.y += u.rotSpeedY * spinAmt;
-        s.rotation.x = lerp(s.rotation.x, 0, a);
-        s.rotation.y = lerp(s.rotation.y, 0, a);
-        s.rotation.z = lerp(s.rotation.z, 0, a);
-
-        // Scale: full when scattered, fit-to-viewport when assembled
-        const sc = lerp(1, fitScale, a);
-        s.scale.setScalar(sc);
-      } else {
-        // Fallback shapes — just orbit, no assembly
-        s.position.set(sx, sy, sz);
-        s.rotation.x += u.rotSpeedX;
-        s.rotation.y += u.rotSpeedY;
-      }
+      s.position.x = Math.cos(angle) * u.radius;
+      s.position.z = Math.sin(angle) * u.radius - 1;
+      s.position.y = u.yOffset + Math.sin(t * 0.6 + u.floatPhase) * 0.35;
+      s.rotation.x += u.rotSpeedX;
+      s.rotation.y += u.rotSpeedY;
     }
 
-    // Camera: parallax while scattered, ease back to straight-on for the name reveal
-    const targetCamX = mouseX * 2.2 * (1 - a);
-    const targetCamY = -mouseY * 1.4 * (1 - a);
-    camera.position.x += (targetCamX - camera.position.x) * 0.05;
-    camera.position.y += (targetCamY - camera.position.y) * 0.05;
-    camera.lookAt(0, 0, 0);
+    const scrollFactor = Math.min(scrollY / 800, 1);
+    camera.position.x += (mouseX * 2.2 - camera.position.x) * 0.05;
+    camera.position.y += (-mouseY * 1.4 - scrollFactor * 1.2 - camera.position.y) * 0.05;
+    camera.lookAt(0, 0, -1);
 
     renderer.render(scene, camera);
 
