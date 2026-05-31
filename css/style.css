@@ -16,9 +16,9 @@
   --nav-bg: rgba(255, 255, 255, 0.75);
   --ghost-bg: rgba(255, 255, 255, 0.65);
   --select-arrow: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%230a0a0a' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
-  --serif: "Fraunces", "Times New Roman", serif;
-  --display: "Bricolage Grotesque", system-ui, sans-serif;
-  --body: "Inter", system-ui, sans-serif;
+  --serif: "Montserrat", system-ui, sans-serif;
+  --display: "Montserrat", system-ui, sans-serif;
+  --body: "Montserrat", system-ui, sans-serif;
   --ease: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --container: 1320px;
@@ -65,9 +65,9 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 em {
   font-family: var(--serif);
   font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--accent);
 }
 
 ::selection { background: var(--accent); color: #fff; }
@@ -568,7 +568,7 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
 .expertise__title { max-width: 16ch; margin-bottom: 4rem; }
 .expertise__grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.5rem;
 }
 .card {
