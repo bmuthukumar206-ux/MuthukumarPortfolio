@@ -457,30 +457,10 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   object-fit: cover;
   object-position: center 30%;
   display: block;
-  /* Accent drop-shadow makes it look like the 3D scene's glow is bleeding onto the photo.
-     drop-shadow follows the alpha cutout of the PNG, so the glow hugs the figure. */
-  filter:
-    contrast(1.04) brightness(1.03) saturate(1.03)
-    drop-shadow(0 0 28px rgba(255, 77, 46, 0.55))
-    drop-shadow(0 0 70px rgba(255, 77, 46, 0.3));
-  animation: portraitGlowPulse 4.5s ease-in-out infinite alternate;
-  transition: transform 1.2s var(--ease);
+  filter: contrast(1.04) brightness(1.03) saturate(1.03);
+  transition: transform 1.2s var(--ease), filter 0.5s;
   position: relative;
   z-index: 2;
-}
-@keyframes portraitGlowPulse {
-  from {
-    filter:
-      contrast(1.04) brightness(1.03) saturate(1.03)
-      drop-shadow(0 0 22px rgba(255, 77, 46, 0.4))
-      drop-shadow(0 0 55px rgba(255, 77, 46, 0.22));
-  }
-  to {
-    filter:
-      contrast(1.04) brightness(1.03) saturate(1.03)
-      drop-shadow(0 0 38px rgba(255, 77, 46, 0.7))
-      drop-shadow(0 0 90px rgba(255, 77, 46, 0.4));
-  }
 }
 .hero__portrait:hover img {
   transform: scale(1.03);
@@ -1151,19 +1131,27 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   }
   .hero__label-role { font-size: 1.4rem; }
 
-  /* Keep the name plate absolute-positioned at the bottom of the hero
-     on mobile too — just shrink the type. */
+  /* On mobile the hero is a flex column — pull the names out of absolute
+     positioning so they sit naturally as a name plate below the photo. */
   .hero__name,
   .hero__namek {
-    font-size: clamp(1.5rem, 6.5vw, 2.5rem);
-    bottom: 4%;
+    position: static !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    top: auto !important;
+    transform: none !important;
+    width: 100%;
+    padding: 0;
+    justify-content: center;
+    font-size: clamp(1.8rem, 8vw, 2.8rem);
+    line-height: 1;
+    animation: none;
   }
-
-  .hero__portrait {
-    order: 3;
-    margin: 0.5rem auto;
-    width: clamp(220px, 62vw, 340px);
-  }
+  .hero__portrait { order: 3; margin: 0.5rem auto; width: clamp(220px, 62vw, 340px); }
+  .hero__name    { order: 4; margin-top: 0.4rem; }
+  .hero__namek   { order: 5; margin-top: 0.1rem; }
 }
 
 @media (max-width: 480px) {
@@ -1172,7 +1160,7 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   .hero { padding: 5.5rem var(--pad-x) 2.5rem; }
   .hero__label-role { font-size: 1.2rem; }
   .hero__name,
-  .hero__namek { font-size: clamp(1.3rem, 7vw, 2rem); bottom: 3%; }
+  .hero__namek { font-size: clamp(1.5rem, 8vw, 2.4rem); }
   .hero__portrait { width: clamp(180px, 70vw, 280px); }
   .about__stats { gap: 0.8rem 1rem; }
   .stat__label { font-size: 0.65rem; letter-spacing: 0.12em; }

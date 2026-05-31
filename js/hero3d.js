@@ -5,6 +5,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
 (() => {
   const canvas = document.querySelector('[data-hero-3d]');
@@ -147,19 +149,51 @@ import * as THREE from 'three';
     mesh.scale.setScalar(scale);
   };
 
-  const buildShapes = (count) => {
+  // Developer / Salesforce-themed symbols rendered as extruded 3D text.
+  // Mix of code syntax + Salesforce-flavored tokens ("SF", "λ", "{ }", "</>", etc.)
+  const DEV_SYMBOLS = [
+    '</>', '{ }', '=>', '[ ]', '( )', ';',
+    '#', '&&', '||', '!=', '++', '**',
+    'SF', 'LWC', 'APEX', 'SOQL', 'DEV', 'CI/CD',
+  ];
+
+  const buildDevSymbols = (font, count) => {
+    for (let i = 0; i < count; i++) {
+      const sym = DEV_SYMBOLS[i % DEV_SYMBOLS.length];
+      const geo = new TextGeometry(sym, {
+        font,
+        size: sym.length > 2 ? 0.42 : 0.6,  // tighter for longer tokens
+        height: 0.2,
+        depth: 0.2,
+        curveSegments: 6,
+        bevelEnabled: true,
+        bevelThickness: 0.035,
+        bevelSize: 0.028,
+        bevelOffset: 0,
+        bevelSegments: 2,
+      });
+      geo.center(); // pivot at visual center so tumbling looks natural
+
+      const mat = palette[i % palette.length];
+      const meshMat = mat.isMeshStandardMaterial ? mat.clone() : mat;
+      const mesh = new THREE.Mesh(geo, meshMat);
+      placeMesh(mesh, i, count);
+      scene.add(mesh);
+      orbiters.push(mesh);
+    }
+  };
+
+  // Fallback to abstract shapes if the font CDN ever fails
+  const buildFallbackShapes = (count) => {
     const geos = [
       new THREE.SphereGeometry(0.55, 48, 32),
       new THREE.IcosahedronGeometry(0.55, 2),
       new THREE.OctahedronGeometry(0.5, 2),
       new THREE.TorusGeometry(0.4, 0.14, 24, 64),
       new THREE.TorusKnotGeometry(0.32, 0.1, 128, 16),
-      new THREE.DodecahedronGeometry(0.5, 0),
-      new THREE.SphereGeometry(0.45, 64, 32),
     ];
     for (let i = 0; i < count; i++) {
       const mat = palette[i % palette.length];
-      // Clone standard materials so click-glow doesn't bleed across shapes
       const meshMat = mat.isMeshStandardMaterial ? mat.clone() : mat;
       const mesh = new THREE.Mesh(geos[i % geos.length], meshMat);
       placeMesh(mesh, i, count);
@@ -168,8 +202,17 @@ import * as THREE from 'three';
     }
   };
 
-  // Reduced counts: front-of-photo scene reads cleaner now
-  buildShapes(lowPower ? 6 : 7);
+  const totalCount = lowPower ? 8 : 12;
+  const fontLoader = new FontLoader();
+  fontLoader.load(
+    'https://unpkg.com/three@0.160.0/examples/fonts/helvetiker_bold.typeface.json',
+    (font) => buildDevSymbols(font, totalCount),
+    undefined,
+    (err) => {
+      console.warn('hero3d: font load failed, falling back to abstract shapes', err);
+      buildFallbackShapes(totalCount);
+    }
+  );
 
   /* ---------- Mouse / touch parallax ---------- */
   let targetMouseX = 0, targetMouseY = 0;
