@@ -48,6 +48,7 @@
   /* ---------- Nav scroll state + hide-on-scroll-down ---------- */
   const nav = $('[data-nav]');
   const toTop = $('[data-to-top]');
+  const heroEl = $('.hero');
   let lastY = window.scrollY;
   let ticking = false;
   const onScroll = () => {
@@ -61,6 +62,20 @@
       else if (goingUp) nav.classList.remove('is-hidden');
     }
     if (toTop) toTop.classList.toggle('is-visible', y > 500);
+
+    // Hero 3D rotation handoff — as you scroll through the hero, the section
+    // tilts back like turning a page, then leaves view for the next section.
+    if (heroEl) {
+      const vh = window.innerHeight;
+      const p = Math.min(y / (vh * 0.85), 1); // 0 at top → 1 by ~85vh scrolled
+      const rotX = p * 22;       // tilt back
+      const rotY = p * -10;      // slight Y twist
+      const scale = 1 - p * 0.18;
+      const opacity = 1 - p * 0.45;
+      heroEl.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) scale(${scale})`;
+      heroEl.style.opacity = String(opacity);
+    }
+
     lastY = y;
     ticking = false;
   };

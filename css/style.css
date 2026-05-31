@@ -309,7 +309,12 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   overflow: hidden;
   display: grid;
   place-items: center;
+  /* 3D rotation handoff to next section (driven by JS scroll handler) */
+  transform-style: preserve-3d;
+  transform-origin: center 30%;
+  will-change: transform, opacity;
 }
+main { perspective: 1400px; perspective-origin: 50% 40%; }
 
 /* Decorative arc + circle */
 .hero__decor {
@@ -398,7 +403,7 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   display: flex;
   align-items: center;
   padding: 0 var(--pad-x);
-  z-index: 1;
+  z-index: 5; /* sits IN FRONT of the portrait (which is z-index 3) */
   pointer-events: none;
   font-family: var(--display);
   font-weight: 700;
