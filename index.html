@@ -20,7 +20,8 @@
   <script type="importmap">
   {
     "imports": {
-      "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
     }
   }
   </script>
@@ -121,14 +122,6 @@
       <!-- top-left availability + role label -->
       <div class="hero__label" data-reveal>
         <span class="hero__label-role">Salesforce Developer</span>
-      </div>
-
-      <!-- giant horizontal name that the photo cuts through -->
-      <div class="hero__name" aria-hidden="true" data-reveal style="left: -80px;">
-        <span class="hero__name-block">MUTHU</span>
-      </div>
-      <div class="hero__namek" aria-hidden="true" data-reveal style="right: -84px;">
-        <span class="hero__name-block">KUMAR</span>
       </div>
 
       <!-- centerpiece portrait -->
@@ -509,6 +502,6 @@
   </button>
 
   <script src="js/script.js?v=4"></script>
-  <script type="module" src="js/hero3d.js?v=1"></script>
+  <script type="module" src="js/hero3d.js?v=2"></script>
 </body>
 </html>

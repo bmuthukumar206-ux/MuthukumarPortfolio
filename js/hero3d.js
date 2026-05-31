@@ -1,11 +1,12 @@
 /* ============================================================
    Hero 3D Scene — Three.js
-   Floating low-poly shapes orbiting a central icosahedron,
-   mouse-controlled camera parallax, scroll-driven scale.
-   Inspired by jesse-zhou.com vibes (without the custom assets).
+   Floating extruded 3D letters of the name MUTHUKUMAR,
+   orbiting with mouse parallax + scroll-driven camera.
    ============================================================ */
 
 import * as THREE from 'three';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
 (() => {
   const canvas = document.querySelector('[data-hero-3d]');
@@ -14,7 +15,6 @@ import * as THREE from 'three';
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (prefersReduced) return;
 
-  // Detect low-power surfaces — cut scene density on phones
   const isCoarse = window.matchMedia('(pointer: coarse)').matches;
   const isNarrow = window.innerWidth < 700;
   const lowPower = isCoarse || isNarrow;
@@ -44,52 +44,17 @@ import * as THREE from 'three';
 
   /* ---------- Lighting ---------- */
   scene.add(new THREE.AmbientLight(0xffffff, 0.55));
-  const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
   dirLight.position.set(4, 6, 5);
   scene.add(dirLight);
   const accentLight = new THREE.PointLight(COLORS.accent, 1.6, 22);
   accentLight.position.set(0, 0, 3);
   scene.add(accentLight);
-  const rimLight = new THREE.PointLight(0xffffff, 0.5, 18);
+  const rimLight = new THREE.PointLight(0xffffff, 0.6, 18);
   rimLight.position.set(-5, 4, -3);
   scene.add(rimLight);
 
-  /* ---------- Center feature shape ---------- */
-  const featureGeo = new THREE.IcosahedronGeometry(1.35, 0);
-  const featureMat = new THREE.MeshStandardMaterial({
-    color: COLORS.accent,
-    metalness: 0.25,
-    roughness: 0.4,
-    flatShading: true,
-    transparent: true,
-    opacity: 0.92,
-  });
-  const feature = new THREE.Mesh(featureGeo, featureMat);
-  feature.position.set(0, 0, -2.5);
-  scene.add(feature);
-
-  // Wireframe halo around feature
-  const haloGeo = new THREE.IcosahedronGeometry(1.6, 0);
-  const haloMat = new THREE.MeshBasicMaterial({
-    color: COLORS.accent,
-    wireframe: true,
-    transparent: true,
-    opacity: 0.35,
-  });
-  const halo = new THREE.Mesh(haloGeo, haloMat);
-  halo.position.copy(feature.position);
-  scene.add(halo);
-
-  /* ---------- Orbiting shapes ---------- */
-  const shapeGeos = [
-    new THREE.IcosahedronGeometry(0.55, 0),
-    new THREE.OctahedronGeometry(0.5, 0),
-    new THREE.TorusGeometry(0.4, 0.13, 14, 28),
-    new THREE.TorusKnotGeometry(0.32, 0.1, 56, 8),
-    new THREE.TetrahedronGeometry(0.6, 0),
-    new THREE.DodecahedronGeometry(0.45, 0),
-  ];
-
+  /* ---------- Materials (shared across letters) ---------- */
   const matAccent = new THREE.MeshStandardMaterial({
     color: COLORS.accent, metalness: 0.3, roughness: 0.4, flatShading: true,
   });
@@ -97,40 +62,12 @@ import * as THREE from 'three';
     color: COLORS.ink, metalness: 0.35, roughness: 0.55, flatShading: true,
   });
   const matWire = new THREE.MeshBasicMaterial({
-    color: COLORS.accent, wireframe: true, transparent: true, opacity: 0.6,
+    color: COLORS.accent, wireframe: true, transparent: true, opacity: 0.65,
   });
   const matWireInk = new THREE.MeshBasicMaterial({
-    color: COLORS.ink, wireframe: true, transparent: true, opacity: 0.4,
+    color: COLORS.ink, wireframe: true, transparent: true, opacity: 0.45,
   });
-  const palette = [matAccent, matInk, matWire, matWireInk, matAccent, matWire];
-
-  const count = lowPower ? 6 : 11;
-  const shapes = [];
-  for (let i = 0; i < count; i++) {
-    const geo = shapeGeos[i % shapeGeos.length];
-    const mat = palette[i % palette.length];
-    const mesh = new THREE.Mesh(geo, mat);
-
-    const angle = (i / count) * Math.PI * 2 + Math.random() * 0.4;
-    const radius = 3.2 + Math.random() * 1.8;
-    const yOffset = (Math.random() - 0.5) * 3;
-    mesh.position.set(Math.cos(angle) * radius, yOffset, Math.sin(angle) * radius - 1);
-
-    mesh.userData = {
-      baseAngle: angle,
-      radius,
-      yOffset,
-      orbitSpeed: 0.08 + Math.random() * 0.12,
-      orbitDir: Math.random() > 0.5 ? 1 : -1,
-      rotSpeedX: (Math.random() - 0.5) * 0.014,
-      rotSpeedY: (Math.random() - 0.5) * 0.014,
-      floatPhase: Math.random() * Math.PI * 2,
-    };
-    const scale = 0.75 + Math.random() * 0.55;
-    mesh.scale.setScalar(scale);
-    scene.add(mesh);
-    shapes.push(mesh);
-  }
+  const palette = [matAccent, matInk, matAccent, matWire, matInk, matAccent, matWireInk, matAccent, matInk, matWire];
 
   /* ---------- Particle dust ---------- */
   if (!lowPower) {
@@ -149,9 +86,83 @@ import * as THREE from 'three';
       transparent: true,
       opacity: 0.55,
     });
-    const stars = new THREE.Points(starsGeo, starsMat);
-    scene.add(stars);
+    scene.add(new THREE.Points(starsGeo, starsMat));
   }
+
+  /* ---------- 3D Letters of the name ---------- */
+  const NAME = 'MUTHUKUMAR';
+  const orbiters = []; // mesh container animated each frame
+
+  const placeMesh = (mesh, i, total) => {
+    const angle = (i / total) * Math.PI * 2 + Math.random() * 0.3;
+    const radius = 3.4 + Math.random() * 1.6;
+    const yOffset = (Math.random() - 0.5) * 2.8;
+    mesh.position.set(Math.cos(angle) * radius, yOffset, Math.sin(angle) * radius - 1);
+    mesh.userData = {
+      baseAngle: angle,
+      radius,
+      yOffset,
+      orbitSpeed: 0.05 + Math.random() * 0.08,
+      orbitDir: Math.random() > 0.5 ? 1 : -1,
+      rotSpeedX: (Math.random() - 0.5) * 0.009,
+      rotSpeedY: (Math.random() - 0.5) * 0.011,
+      floatPhase: Math.random() * Math.PI * 2,
+    };
+  };
+
+  const buildLetters = (font) => {
+    const total = NAME.length;
+    for (let i = 0; i < total; i++) {
+      const char = NAME[i];
+      const geo = new TextGeometry(char, {
+        font,
+        size: 0.85,
+        height: 0.28,    // r160 uses `height` for extrude depth
+        depth: 0.28,     // forward-compatible alias used in newer Three.js
+        curveSegments: 6,
+        bevelEnabled: true,
+        bevelThickness: 0.04,
+        bevelSize: 0.03,
+        bevelOffset: 0,
+        bevelSegments: 2,
+      });
+      geo.center(); // pivot at visual center so spins look natural
+
+      const mat = palette[i % palette.length];
+      const mesh = new THREE.Mesh(geo, mat);
+      placeMesh(mesh, i, total);
+      scene.add(mesh);
+      orbiters.push(mesh);
+    }
+  };
+
+  // Fallback if font fails: a few simple shapes so the canvas isn't empty
+  const buildFallbackShapes = () => {
+    const geos = [
+      new THREE.IcosahedronGeometry(0.55, 0),
+      new THREE.OctahedronGeometry(0.5, 0),
+      new THREE.TorusGeometry(0.4, 0.13, 14, 28),
+      new THREE.TetrahedronGeometry(0.6, 0),
+    ];
+    const total = 8;
+    for (let i = 0; i < total; i++) {
+      const mesh = new THREE.Mesh(geos[i % geos.length], palette[i % palette.length]);
+      placeMesh(mesh, i, total);
+      scene.add(mesh);
+      orbiters.push(mesh);
+    }
+  };
+
+  const fontLoader = new FontLoader();
+  fontLoader.load(
+    'https://unpkg.com/three@0.160.0/examples/fonts/helvetiker_bold.typeface.json',
+    (font) => buildLetters(font),
+    undefined,
+    (err) => {
+      console.warn('hero3d: font load failed, falling back to shapes', err);
+      buildFallbackShapes();
+    }
+  );
 
   /* ---------- Mouse / touch parallax ---------- */
   let targetMouseX = 0, targetMouseY = 0;
@@ -169,7 +180,7 @@ import * as THREE from 'three';
   let scrollY = window.scrollY;
   window.addEventListener('scroll', () => { scrollY = window.scrollY; }, { passive: true });
 
-  /* ---------- Theme reactive: dim/brighten on dark ---------- */
+  /* ---------- Theme reactive ---------- */
   const applyThemeColors = () => {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     const inkColor = isDark ? 0xf3f3f1 : COLORS.ink;
@@ -191,21 +202,17 @@ import * as THREE from 'three';
     renderer.setSize(width, height, false);
   };
   window.addEventListener('resize', resize);
-  // Re-measure after fonts load & layout settles
   requestAnimationFrame(resize);
   setTimeout(resize, 300);
 
   /* ---------- Render loop ---------- */
   const clock = new THREE.Clock();
   let visible = true;
-
-  // Pause when tab hidden
   document.addEventListener('visibilitychange', () => {
     visible = document.visibilityState === 'visible';
     if (visible) clock.start();
   });
 
-  // Pause when hero scrolled out of view (saves battery)
   let heroOnscreen = true;
   if ('IntersectionObserver' in window) {
     const hero = canvas.closest('.hero');
@@ -216,7 +223,6 @@ import * as THREE from 'three';
     }
   }
 
-  // Fade-in after first frame
   let firstFrame = true;
 
   const tick = () => {
@@ -225,13 +231,12 @@ import * as THREE from 'three';
 
     const t = clock.getElapsedTime();
 
-    // Smooth pointer
     mouseX += (targetMouseX - mouseX) * 0.05;
     mouseY += (targetMouseY - mouseY) * 0.05;
 
-    // Orbit + spin shapes
-    for (let i = 0; i < shapes.length; i++) {
-      const s = shapes[i];
+    // Orbit + spin
+    for (let i = 0; i < orbiters.length; i++) {
+      const s = orbiters[i];
       const u = s.userData;
       const angle = u.baseAngle + t * u.orbitSpeed * u.orbitDir;
       s.position.x = Math.cos(angle) * u.radius;
@@ -241,24 +246,15 @@ import * as THREE from 'three';
       s.rotation.y += u.rotSpeedY;
     }
 
-    // Feature shape: slow tumble, scroll-driven scale
-    feature.rotation.x = t * 0.18;
-    feature.rotation.y = t * 0.22;
-    halo.rotation.x = -t * 0.12;
-    halo.rotation.y = -t * 0.15;
     const scrollFactor = Math.min(scrollY / 800, 1);
-    const targetScale = 1 - scrollFactor * 0.4;
-    feature.scale.setScalar(targetScale + Math.sin(t * 1.2) * 0.02);
-    halo.scale.setScalar(targetScale * 1.05);
 
-    // Camera parallax + slight scroll drift
     camera.position.x += (mouseX * 2.2 - camera.position.x) * 0.04;
     camera.position.y += (-mouseY * 1.4 - scrollFactor * 1.2 - camera.position.y) * 0.04;
     camera.lookAt(0, 0, -1);
 
     renderer.render(scene, camera);
 
-    if (firstFrame) {
+    if (firstFrame && orbiters.length) {
       firstFrame = false;
       canvas.classList.add('is-ready');
     }
