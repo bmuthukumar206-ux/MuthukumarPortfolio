@@ -166,31 +166,36 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
     }
   };
 
-  // Fallback if font load fails
-  const buildFallbackShapes = () => {
+  // Decorative floating shapes — coexist with letters, always orbit (never assemble)
+  const buildShapes = (count) => {
     const geos = [
       new THREE.IcosahedronGeometry(0.55, 0),
       new THREE.OctahedronGeometry(0.5, 0),
       new THREE.TorusGeometry(0.4, 0.13, 14, 28),
       new THREE.TetrahedronGeometry(0.6, 0),
+      new THREE.DodecahedronGeometry(0.45, 0),
+      new THREE.TorusKnotGeometry(0.3, 0.09, 56, 8),
     ];
-    const total = 8;
-    for (let i = 0; i < total; i++) {
+    for (let i = 0; i < count; i++) {
       const mesh = new THREE.Mesh(geos[i % geos.length], palette[i % palette.length]);
-      placeMesh(mesh, i, total);
+      placeMesh(mesh, i, count);
+      // No letterIndex → animation loop treats this as decoration, no assembly
       scene.add(mesh);
       orbiters.push(mesh);
     }
   };
 
+  // Always show the floating shapes as decor
+  buildShapes(lowPower ? 5 : 8);
+
+  // Load the font and add the assembling letters on top
   const fontLoader = new FontLoader();
   fontLoader.load(
     'https://unpkg.com/three@0.160.0/examples/fonts/helvetiker_bold.typeface.json',
     (font) => buildLetters(font),
     undefined,
     (err) => {
-      console.warn('hero3d: font load failed, falling back to shapes', err);
-      buildFallbackShapes();
+      console.warn('hero3d: font load failed, scene continues with shapes only', err);
     }
   );
 
@@ -297,10 +302,10 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
       const sy = u.yOffset + Math.sin(t * 0.6 + u.floatPhase) * 0.35;
 
       if (u.letterIndex !== undefined) {
-        // Target (assembled) position — spell MUTHUKUMAR above the portrait,
-        // so the photo doesn't block the middle letters.
+        // Target (assembled) position — spell MUTHUKUMAR BELOW the portrait,
+        // like a name plate beneath the photo.
         const tx = (u.letterIndex - (u.totalLetters - 1) / 2) * fitSpacing;
-        const ty = 1.8;
+        const ty = -2.4;
         const tz = 0;
 
         s.position.x = lerp(sx, tx, a);
