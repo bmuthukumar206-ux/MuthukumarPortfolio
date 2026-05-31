@@ -309,12 +309,7 @@ section { padding: 6rem var(--pad-x); max-width: var(--container); margin: 0 aut
   overflow: hidden;
   display: grid;
   place-items: center;
-  /* 3D rotation handoff to next section (driven by JS scroll handler) */
-  transform-style: preserve-3d;
-  transform-origin: center 30%;
-  will-change: transform, opacity;
 }
-main { perspective: 1400px; perspective-origin: 50% 40%; }
 
 /* Decorative arc + circle */
 .hero__decor {
@@ -397,8 +392,8 @@ main { perspective: 1400px; perspective-origin: 50% 40%; }
 .hero__name,
 .hero__namek {
   position: absolute;
-  left: 0; right: 0;
-  bottom: 7%;
+  left: 250px; right: 250px;
+  bottom: 6%;
   top: auto;
   transform: none;
   display: flex;
@@ -462,10 +457,30 @@ main { perspective: 1400px; perspective-origin: 50% 40%; }
   object-fit: cover;
   object-position: center 30%;
   display: block;
-  filter: contrast(1.04) brightness(1.03) saturate(1.03);
-  transition: transform 1.2s var(--ease), filter 0.5s;
+  /* Accent drop-shadow makes it look like the 3D scene's glow is bleeding onto the photo.
+     drop-shadow follows the alpha cutout of the PNG, so the glow hugs the figure. */
+  filter:
+    contrast(1.04) brightness(1.03) saturate(1.03)
+    drop-shadow(0 0 28px rgba(255, 77, 46, 0.55))
+    drop-shadow(0 0 70px rgba(255, 77, 46, 0.3));
+  animation: portraitGlowPulse 4.5s ease-in-out infinite alternate;
+  transition: transform 1.2s var(--ease);
   position: relative;
   z-index: 2;
+}
+@keyframes portraitGlowPulse {
+  from {
+    filter:
+      contrast(1.04) brightness(1.03) saturate(1.03)
+      drop-shadow(0 0 22px rgba(255, 77, 46, 0.4))
+      drop-shadow(0 0 55px rgba(255, 77, 46, 0.22));
+  }
+  to {
+    filter:
+      contrast(1.04) brightness(1.03) saturate(1.03)
+      drop-shadow(0 0 38px rgba(255, 77, 46, 0.7))
+      drop-shadow(0 0 90px rgba(255, 77, 46, 0.4));
+  }
 }
 .hero__portrait:hover img {
   transform: scale(1.03);
@@ -507,7 +522,7 @@ main { perspective: 1400px; perspective-origin: 50% 40%; }
 /* Bottom-left endless skill ticker */
 .hero__ticker {
   position: absolute;
-  bottom: 2.5rem;
+  bottom: 0.5rem;
   left: 0;
   z-index: 5;
   width: min(45%, 600px);

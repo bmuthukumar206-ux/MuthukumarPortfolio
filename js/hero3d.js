@@ -72,16 +72,16 @@ import * as THREE from 'three';
   lightning.position.set(0, 4, 4);
   scene.add(lightning);
 
-  /* ---------- Materials ---------- */
+  /* ---------- Materials (stronger inherent glow) ---------- */
   const mkSolid = (hex) => new THREE.MeshStandardMaterial({
     color: hex,
-    metalness: 0.45,
-    roughness: 0.28,
+    metalness: 0.4,
+    roughness: 0.26,
     emissive: hex,
-    emissiveIntensity: 0.22,
+    emissiveIntensity: 0.55,
   });
   const mkWire = (hex) => new THREE.MeshBasicMaterial({
-    color: hex, wireframe: true, transparent: true, opacity: 0.65,
+    color: hex, wireframe: true, transparent: true, opacity: 0.75,
   });
 
   const matAccent     = mkSolid(COLORS.accent);
@@ -119,13 +119,15 @@ import * as THREE from 'three';
   const orbiters = [];
 
   const placeMesh = (mesh, i, total) => {
-    const angle = (i / total) * Math.PI * 2 + Math.random() * 0.3;
-    // Mobile: tighter orbit + smaller scale so shapes read as "little + far"
-    const baseR  = lowPower ? 2.2 : 3.4;
-    const varR   = lowPower ? 1.3 : 1.6;
-    const baseS  = lowPower ? 0.42 : 0.8;
-    const varS   = lowPower ? 0.28 : 0.5;
-    const yRange = lowPower ? 2.2 : 2.8;
+    // More angular scatter on mobile so shapes don't bunch up in a narrow viewport
+    const angle = (i / total) * Math.PI * 2 + (Math.random() - 0.5) * (lowPower ? 1.0 : 0.4);
+    // Mobile: keep similar size to desktop so shapes read clearly (not far/tiny),
+    // but spread them across a wider Y range to use the vertical space.
+    const baseR  = lowPower ? 2.6 : 3.4;
+    const varR   = lowPower ? 1.6 : 1.6;
+    const baseS  = lowPower ? 0.7 : 0.8;
+    const varS   = lowPower ? 0.45 : 0.5;
+    const yRange = lowPower ? 4.0 : 2.8;
 
     const radius = baseR + Math.random() * varR;
     const yOffset = (Math.random() - 0.5) * yRange;
@@ -140,12 +142,8 @@ import * as THREE from 'three';
       rotSpeedX: (Math.random() - 0.5) * 0.009,
       rotSpeedY: (Math.random() - 0.5) * 0.011,
       floatPhase: Math.random() * Math.PI * 2,
-      glow: 0,
-      pulse: 0,
-      baseEmissive: mesh.material.emissiveIntensity ?? 0,
     };
     const scale = baseS + Math.random() * varS;
-    mesh.userData.baseScale = scale;
     mesh.scale.setScalar(scale);
   };
 
@@ -185,40 +183,8 @@ import * as THREE from 'three';
     if (e.touches.length) onMove(e.touches[0].clientX, e.touches[0].clientY);
   }, { passive: true });
 
-  /* ---------- Click → glow (raycaster) ---------- */
-  const raycaster = new THREE.Raycaster();
-  const ndc = new THREE.Vector2();
-  const tryHit = (clientX, clientY) => {
-    const rect = canvas.getBoundingClientRect();
-    if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) return;
-    ndc.x = ((clientX - rect.left) / rect.width) * 2 - 1;
-    ndc.y = -((clientY - rect.top) / rect.height) * 2 + 1;
-    raycaster.setFromCamera(ndc, camera);
-    const hits = raycaster.intersectObjects(orbiters, false);
-    if (!hits.length) return;
-    const hit = hits[0].object;
-    hit.userData.glow = 1;
-    hit.userData.pulse = 1;
-  };
+  // Hero element handle (used by IntersectionObserver below)
   const hero = canvas.closest('.hero');
-  if (hero) {
-    hero.addEventListener('click', (e) => tryHit(e.clientX, e.clientY));
-    hero.addEventListener('touchend', (e) => {
-      if (e.changedTouches.length) {
-        const t = e.changedTouches[0];
-        tryHit(t.clientX, t.clientY);
-      }
-    });
-    hero.addEventListener('mousemove', (e) => {
-      const rect = canvas.getBoundingClientRect();
-      if (e.clientX < rect.left || e.clientX > rect.right) return;
-      ndc.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      ndc.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-      raycaster.setFromCamera(ndc, camera);
-      const hovering = raycaster.intersectObjects(orbiters, false).length > 0;
-      hero.style.cursor = hovering ? 'pointer' : '';
-    });
-  }
 
   /* ---------- Scroll drive ---------- */
   let scrollY = window.scrollY;
@@ -323,18 +289,6 @@ import * as THREE from 'three';
       s.position.y = u.yOffset + Math.sin(t * 0.6 + u.floatPhase) * 0.35;
       s.rotation.x += u.rotSpeedX;
       s.rotation.y += u.rotSpeedY;
-
-      if (u.glow > 0 && s.material.isMeshStandardMaterial) {
-        s.material.emissiveIntensity = u.baseEmissive + u.glow * 1.4;
-        u.glow = Math.max(0, u.glow - dt * 0.9);
-        if (u.glow === 0) s.material.emissiveIntensity = u.baseEmissive;
-      }
-      if (u.pulse > 0) {
-        const k = 1 + u.pulse * 0.4;
-        s.scale.setScalar(u.baseScale * k);
-        u.pulse = Math.max(0, u.pulse - dt * 1.5);
-        if (u.pulse === 0) s.scale.setScalar(u.baseScale);
-      }
     }
 
     const scrollFactor = Math.min(scrollY / 800, 1);
