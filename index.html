@@ -14,7 +14,16 @@
     href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500&display=swap"
     rel="stylesheet"
   />
-  <link rel="stylesheet" href="css/style.css?v=4" />
+  <link rel="stylesheet" href="css/style.css?v=5" />
+
+  <!-- Three.js (ESM via importmap) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+    }
+  }
+  </script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230a0a0a'/%3E%3Ctext x='50' y='70' text-anchor='middle' font-family='Montserrat, sans-serif' font-size='58' font-weight='700' fill='%23ff4d2e'%3EM%3C/text%3E%3C/svg%3E" />
 
   <!-- Theme init: runs before paint so there's no flash, and wires up the toggle independently of the main IIFE -->
@@ -105,6 +114,9 @@
         <path d="M -50,600 Q 350,200 700,400 T 1450,250" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 6" />
         <circle cx="350" cy="280" r="280" fill="none" stroke="currentColor" stroke-width="1" opacity="0.4" />
       </svg>
+
+      <!-- 3D interactive scene (Three.js) -->
+      <canvas class="hero__3d" data-hero-3d aria-hidden="true"></canvas>
 
       <!-- top-left availability + role label -->
       <div class="hero__label" data-reveal>
@@ -497,5 +509,6 @@
   </button>
 
   <script src="js/script.js?v=4"></script>
+  <script type="module" src="js/hero3d.js?v=1"></script>
 </body>
 </html>
