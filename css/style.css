@@ -393,23 +393,24 @@ main { perspective: 1400px; perspective-origin: 50% 40%; }
   line-height: 1.1;
 }
 
-/* MUTHU on the LEFT of the photo, KUMAR on the RIGHT */
+/* Name plate at the bottom of the hero, beneath the photo */
 .hero__name,
 .hero__namek {
   position: absolute;
-  inset: 0;
-  top: 0%;
-  transform: translateY(-50%);
+  left: 0; right: 0;
+  bottom: 7%;
+  top: auto;
+  transform: none;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   padding: 0 var(--pad-x);
-  z-index: 5; /* sits IN FRONT of the portrait (which is z-index 3) */
+  z-index: 5; /* IN FRONT of the portrait (z-index 3) */
   pointer-events: none;
   font-family: var(--display);
   font-weight: 700;
-  font-size: clamp(4rem, 17vw, 10rem);
-  line-height: 0.9;
-  letter-spacing: -0.06em;
+  font-size: clamp(1.8rem, 6vw, 4rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
   color: var(--ink);
   white-space: nowrap;
   text-transform: uppercase;
@@ -1135,22 +1136,13 @@ main { perspective: 1400px; perspective-origin: 50% 40%; }
   }
   .hero__label-role { font-size: 1.4rem; }
 
+  /* Keep the name plate absolute-positioned at the bottom of the hero
+     on mobile too — just shrink the type. */
   .hero__name,
   .hero__namek {
-    position: static !important;
-    inset: auto !important;
-    left: auto !important;
-    right: auto !important;
-    transform: none !important;
-    width: 100%;
-    padding: 0;
-    justify-content: center;
-    font-size: clamp(2.2rem, 11vw, 4rem);
-    line-height: 0.95;
-    animation: none;
+    font-size: clamp(1.5rem, 6.5vw, 2.5rem);
+    bottom: 4%;
   }
-  .hero__name { order: 2; }
-  .hero__namek { order: 4; margin-top: 0.2rem; }
 
   .hero__portrait {
     order: 3;
@@ -1165,7 +1157,7 @@ main { perspective: 1400px; perspective-origin: 50% 40%; }
   .hero { padding: 5.5rem var(--pad-x) 2.5rem; }
   .hero__label-role { font-size: 1.2rem; }
   .hero__name,
-  .hero__namek { font-size: clamp(2rem, 13vw, 3.5rem); }
+  .hero__namek { font-size: clamp(1.3rem, 7vw, 2rem); bottom: 3%; }
   .hero__portrait { width: clamp(180px, 70vw, 280px); }
   .about__stats { gap: 0.8rem 1rem; }
   .stat__label { font-size: 0.65rem; letter-spacing: 0.12em; }
